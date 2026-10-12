@@ -12,6 +12,7 @@ import Chart from '@/components/admin/Chart'
 import Pie from '@/components/admin/Pie'
 import RecentActivity from '@/components/admin/RecentActivity'
 import TopCourses from '@/components/admin/TopCourses'
+import Link from 'next/link'
 
 
 export default function AdminDashboard() {
@@ -47,13 +48,20 @@ export default function AdminDashboard() {
 
           {/* Statistics */}
           <section>
-            <div className="mb-4">
-              <h2 className="text-lg font-bold text-[#0b1b33]">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <div>
+                <h2 className="text-lg font-bold text-[#0b1b33]">
                 Platform overview
               </h2>
               <p className="mt-1 text-sm text-slate-500">
                 Key metrics at a glance
               </p>
+              </div>
+              
+              <Link href="/admin/create-teacher">
+                <button className= "rounded-xl border-gray-600 border p-4 bg-orange-600 text-white" >create a teacher account</button>
+              </Link>
+              
             </div>
 
             <AdminCards />
