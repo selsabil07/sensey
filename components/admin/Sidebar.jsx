@@ -111,18 +111,7 @@ export default function Sidebar({ mobileOpen, onClose }) {
           </nav>
         </div>
 
-        <div className="mt-auto p-5">
-          <div className="mb-4 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-            <div className="mb-2 flex h-9 w-9 items-center justify-center rounded-xl bg-blue-500/15 text-lg">
-              ✦
-            </div>
-
-            <p className="text-sm font-semibold">Sensey platform</p>
-
-            <p className="mt-1 text-xs leading-5 text-slate-400">
-              Manage your learning community in one place.
-            </p>
-          </div>
+        <div className="mt-auto p-9">
 
           <button
             type="button"

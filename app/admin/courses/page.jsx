@@ -131,7 +131,10 @@ export default function AdminCoursesPage() {
                   <th className="px-6 py-4 font-semibold">Teacher</th>
                   <th className="px-6 py-4 font-semibold">Level</th>
                   <th className="px-6 py-4 font-semibold">Published</th>
-                  <th className="px-6 py-4 text-right font-semibold">Action</th>
+                  <th className="px-6 py-4 font-semibold">Subject </th>
+                  <th className="px-6 py-4  font-semibold text-center">Created at</th>
+                  <th className="px-6 py-4  font-semibold text-center">Action</th>
+
                 </tr>
               </thead>
 
@@ -195,29 +198,21 @@ export default function AdminCoursesPage() {
                         </span>
                       </td>
 
-                        <td className="px-6 py-4 text-right">
-                          <button
-                            type="button"
-                            onClick={() => setSelectedCourse(course)}
-                            className="whitespace-nowrap rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700"
-                          >
-                            View details
-                          </button>
-                        </td>
+                        
 
                         <td className="px-6 py-4 text-slate-600">
                           {course.subject || "—"}
                         </td>
 
-                        <td className="px-6 py-4 text-slate-600">
+                        {/* <td className="px-6 py-4 text-slate-600">
                           {course.teacher_id || "—"}
-                        </td>
+                        </td> */}
 
                         <td className="whitespace-nowrap px-6 py-4 text-slate-600">
                           {formatDate(course.created_at)}
                         </td>
 
-                        <td className="px-6 py-4">
+                        {/* <td className="px-6 py-4">
                           <span
                             className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${
                               ["active", "published"].includes(status)
@@ -239,7 +234,7 @@ export default function AdminCoursesPage() {
                             {status.charAt(0).toUpperCase() +
                               status.slice(1)}
                           </span>
-                        </td>
+                        </td> */}
 
                         <td className="px-6 py-4 text-right">
                           <button
