@@ -111,6 +111,43 @@ async function fetchStudents() {
     });
   }, [students, search, statusFilter]);
 
+
+  
+const handleToggleStatus = async (student) => {
+  const nextStatus = !student.is_active
+
+  try {
+    const response = await fetch('/api/admin/users/status', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: student.id,
+        isActive: nextStatus,
+      }),
+    })
+
+    const result = await response.json()
+
+    if (!response.ok) {
+      throw new Error(result.error || 'Could not update student status')
+    }
+
+    setStudents((currentStudents) =>
+      currentStudents.map((item) =>
+        item.id === student.id
+          ? { ...item, is_active: nextStatus }
+          : item
+      )
+    )
+  } catch (error) {
+    console.error('Student status update failed:', error)
+    alert(error.message)
+  }
+}
+
+
   return (
     <div className="min-h-[calc(100vh-5rem)] min-w-0 bg-slate-50 p-4 text-slate-900 sm:p-6 lg:p-8">
       <div className="mx-auto w-full max-w-screen-2xl space-y-6">
@@ -181,7 +218,7 @@ async function fetchStudents() {
                   <th className="px-6 py-4 font-semibold">
                     Status
                   </th>
-                  <th className="px-6 py-4 text-right font-semibold">
+                  <th className="px-6 py-4 text-center font-semibold">
                     Action
                   </th>
                 </tr>
@@ -262,35 +299,38 @@ async function fetchStudents() {
 
                         <td className="px-6 py-4">
                           <span
-                            className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${
-                              status === "active"
-                                ? "bg-green-50 text-green-700"
-                                : "bg-slate-100 text-slate-600"
+                            className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                              student.is_active
+                                ? 'bg-green-100 text-green-700'
+                                : 'bg-red-100 text-red-700'
                             }`}
                           >
-                            <span
-                              className={`h-1.5 w-1.5 rounded-full ${
-                                status === "active"
-                                  ? "bg-green-500"
-                                  : "bg-slate-400"
-                              }`}
-                            />
-                            {status === "active"
-                              ? "Active"
-                              : status === "inactive"
-                                ? "Inactive"
-                                : status}
+                            {student.is_active ? 'Active' : 'Inactive'}
                           </span>
                         </td>
 
-                        <td className="px-6 py-4 text-right">
-                          <button
-                            type="button"
-                            onClick={() => setSelectedStudent(student)}
-                            className="whitespace-nowrap rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700"
-                          >
-                            View details
-                          </button>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              type="button"
+                              onClick={() => handleToggleStatus(student)}
+                              className={`rounded-lg border px-3 py-2 text-xs font-semibold transition ${
+                                student.is_active
+                                  ? 'border-red-200 text-red-600 hover:bg-red-50'
+                                  : 'border-green-200 text-green-700 hover:bg-green-50'
+                              }`}
+                            >
+                              {student.is_active ? 'Deactivate' : 'Activate'}
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => setSelectedStudent(student)}
+                              className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700"
+                            >
+                              View details
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     );

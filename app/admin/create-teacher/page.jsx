@@ -13,7 +13,7 @@ import {
   GraduationCap,
   LockKeyhole,
   Mail,
-  number,
+  Phone,
   UserRound,
   AlertCircle,
   LoaderCircle,
@@ -26,6 +26,7 @@ const initialForm = {
   subject: "",
   password: "",
   confirmPassword: "",
+  
 };
 
 const subjects = [
@@ -98,15 +99,24 @@ export default function CreateTeacherPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          full_name: fullName,
-          email,
-          number: number,
-          subject: form.subject,
-          password: form.password,
+            full_name: fullName,
+            email: email,
+            number: form.number,
+            subject: form.subject,
+            password: form.password,
+            confirmPassword: form.confirmPassword,
         }),
       });
 
       const result = await response.json().catch(() => ({}));
+      // console.log('Received teacher form fields:', {
+      //     full_name: Boolean(body.full_name?.trim()),
+      //     number: Boolean(body.number?.trim()),
+      //     subject: Boolean(body.subject?.trim()),
+      //     email: Boolean(body.email?.trim()),
+      //     password: Boolean(body.password),
+      //     confirmPassword: Boolean(body.confirmPassword),
+      //   })
 
       if (!response.ok) {
         throw new Error(
@@ -231,7 +241,7 @@ export default function CreateTeacherPage() {
                         name="full_name"
                         type="text"
                         autoComplete="name"
-                        placeholder="e.g. Sarah Benali"
+                        placeholder="e.g. Sarah Johndon "
                         value={form.full_name}
                         onChange={handleChange}
                         className={inputClass}
@@ -270,8 +280,8 @@ export default function CreateTeacherPage() {
                         htmlFor="number"
                         className="flex items-center gap-2 text-sm font-semibold"
                       >
-                        <number size={16} className="text-slate-400" />
-                        number number *
+                        <Phone size={16} className="text-slate-400" />
+                        Phone number *
                       </label>
 
                       <input

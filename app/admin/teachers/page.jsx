@@ -100,6 +100,44 @@ export default function AdminTeachersPage() {
     });
   };
 
+
+  
+const handleToggleStatus = async (teacher) => {
+  const nextStatus = !teacher.is_active
+
+  try {
+    const response = await fetch('/api/admin/users/status', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: teacher.id,
+        isActive: nextStatus,
+      }),
+    })
+
+    const result = await response.json()
+
+    if (!response.ok) {
+      throw new Error(result.error || 'Could not update account')
+    }
+
+    // Update the table without reloading the page.
+    setTeachers((currentTeachers) =>
+      currentTeachers.map((item) =>
+        item.id === teacher.id
+          ? { ...item, is_active: nextStatus }
+          : item
+      )
+    )
+  } catch (error) {
+    console.error('Status update failed:', error)
+    alert(error.message)
+  }
+}
+
+
   return (
     <div className="">
   <div className="">
@@ -129,8 +167,19 @@ export default function AdminTeachersPage() {
                   className="h-10 w-full rounded-xl border border-slate-200 bg-white pl-9 pr-3 text-sm outline-none transition focus:border-orange-400 focus:ring-2 focus:ring-orange-100 sm:w-64"
                 />
               </div>
-
-
+              <div>
+                <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-orange-400"
+              >
+                <option value="all">All statuses</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          
+              
             </div>
           </div>
 
@@ -144,55 +193,35 @@ export default function AdminTeachersPage() {
           )}
 
           <div className="overflow-x-auto">
+            
             <table className="w-full min-w-[850px] text-left text-sm">
               <thead className="bg-slate-50 text-xs uppercase tracking-wider text-slate-500">
                 <tr>
-                  <th className="px-6 py-4 font-semibold">
-                    Teacher
-                  </th>
-                  <th className="px-6 py-4 font-semibold">
-                    Subject
-                  </th>
-                  <th className="px-6 py-4 font-semibold">
-                    Joined
-                  </th>
-                  <th className="px-6 py-4 font-semibold">
-                    Status
-                  </th>
-                  <th className="px-6 py-4 text-right font-semibold">
-                    Action
-                  </th>
+                  <th className="px-6 py-4 font-semibold">Teacher</th>
+                  <th className="px-6 py-4 font-semibold">Subject</th>
+                  <th className="px-6 py-4 font-semibold">Joined</th>
+                  <th className="px-6 py-4 font-semibold">Status</th>
+                  <th className="px-6 py-4 text-center font-semibold">Action</th>
                 </tr>
               </thead>
 
               <tbody className="divide-y divide-slate-100">
                 {loading ? (
                   <tr>
-                    <td
-                      colSpan={5}
-                      className="px-6 py-16 text-center text-slate-500"
-                    >
+                    <td colSpan={5} className="px-6 py-16 text-center text-slate-500">
                       Loading teachers...
                     </td>
                   </tr>
                 ) : error ? (
                   <tr>
-                    <td
-                      colSpan={5}
-                      className="px-6 py-16 text-center text-slate-400"
-                    >
+                    <td colSpan={5} className="px-6 py-16 text-center text-slate-400">
                       Check your Supabase configuration and permissions.
                     </td>
                   </tr>
                 ) : filteredTeachers.length === 0 ? (
                   <tr>
-                    <td
-                      colSpan={5}
-                      className="px-6 py-16 text-center"
-                    >
-                      <p className="font-medium text-slate-700">
-                        No teachers found
-                      </p>
+                    <td colSpan={5} className="px-6 py-16 text-center">
+                      <p className="font-medium text-slate-700">No teachers found</p>
                       <p className="mt-1 text-slate-400">
                         Try changing your search or filters.
                       </p>
@@ -200,7 +229,6 @@ export default function AdminTeachersPage() {
                   </tr>
                 ) : (
                   filteredTeachers.map((teacher) => {
-                    const status = getStatus(teacher);
                     const name = getName(teacher);
 
                     return (
@@ -208,6 +236,7 @@ export default function AdminTeachersPage() {
                         key={teacher.id || teacher.email}
                         className="transition hover:bg-slate-50"
                       >
+                        {/* Teacher */}
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
                             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-orange-100 font-bold text-orange-700">
@@ -215,9 +244,7 @@ export default function AdminTeachersPage() {
                             </div>
 
                             <div>
-                              <p className="font-semibold text-slate-800">
-                                {name}
-                              </p>
+                              <p className="font-semibold text-slate-800">{name}</p>
                               <p className="mt-1 text-slate-500">
                                 {teacher.email || "No email"}
                               </p>
@@ -225,46 +252,52 @@ export default function AdminTeachersPage() {
                           </div>
                         </td>
 
+                        {/* Subject */}
                         <td className="px-6 py-4 text-slate-600">
                           {teacher.subject || "Not specified"}
                         </td>
 
+                        {/* Joined */}
                         <td className="px-6 py-4 text-slate-600">
                           {formatDate(teacher.created_at)}
                         </td>
 
+                        {/* Status badge */}
                         <td className="px-6 py-4">
                           <span
-                            className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${
-                              status === "active"
-                                ? "bg-green-50 text-green-700"
-                                : "bg-slate-100 text-slate-600"
+                            className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                              teacher.is_active
+                                ? "bg-green-100 text-green-700"
+                                : "bg-red-100 text-red-700"
                             }`}
                           >
-                            <span
-                              className={`h-1.5 w-1.5 rounded-full ${
-                                status === "active"
-                                  ? "bg-green-500"
-                                  : "bg-slate-400"
-                              }`}
-                            />
-                            {status === "active"
-                              ? "Active"
-                              : status === "inactive"
-                                ? "Inactive"
-                                : status}
+                            {teacher.is_active ? "Active" : "Inactive"}
                           </span>
                         </td>
 
-                        <td className="px-6 py-4 text-right">
-                          <button
-                            onClick={() =>
-                              setSelectedTeacher(teacher)
-                            }
-                            className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700"
-                          >
-                            View details
-                          </button>
+                        {/* Actions */}
+                        <td className="px-6 py-4">
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              type="button"
+                              onClick={() => handleToggleStatus(teacher)}
+                              className={`rounded-lg px-3 py-2 text-xs font-semibold transition ${
+                                teacher.is_active
+                                  ? "border border-red-200 text-red-600 hover:bg-red-50"
+                                  : "border border-green-200 text-green-700 hover:bg-green-50"
+                              }`}
+                            >
+                              {teacher.is_active ? "Deactivate" : "Activate"}
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => setSelectedTeacher(teacher)}
+                              className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-orange-300 hover:bg-orange-50 hover:text-orange-700"
+                            >
+                              View details
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     );
@@ -272,6 +305,7 @@ export default function AdminTeachersPage() {
                 )}
               </tbody>
             </table>
+
           </div>
 
           <div className="border-t border-slate-100 px-6 py-4 text-sm text-slate-500">
