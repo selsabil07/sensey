@@ -77,17 +77,16 @@ export default function TeacherQuizzesPage() {
       setCourses(courseData || []);
 
       // Fetch only this teacher's PDF quiz records.
-      const { data: quizData, error: quizError } = await supabase
+        const { data: quizData, error: quizError } = await supabase
         .from("quiz_pdfs")
-        .select(
-          "id, teacher_id, course_id, lesson_id, title, original_file_name, file_path, file_size, created_at"
-        )
+        .select("*")
         .eq("teacher_id", user.id)
         .order("created_at", { ascending: false });
 
-      if (quizError) throw quizError;
+        if (quizError) throw quizError;
 
-      setQuizzes(quizData || []);
+        setQuizzes(quizData ?? []);
+        
     } catch (err) {
       console.error("Failed to load quiz PDFs:", err);
       setError(err.message || "Could not load your quizzes.");
