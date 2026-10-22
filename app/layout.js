@@ -14,7 +14,7 @@ import "./globals.css";
   return (
     <html lang="en">
          <body className={`${bricolage.variable} antialiased`}>
-            {/* <Navbar /> */}
+          
             {children}
         </body>
     </html>
