@@ -42,11 +42,11 @@ const navigation = [
     href: "/teacher/grades",
     icon: ChartNoAxesCombined,
   },
-  {
-    label: "AI Assistant",
-    href: "/teacher/ai-assistant",
-    icon: Bot,
-  },
+  // {
+  //   label: "AI Assistant",
+  //   href: "/teacher/ai-assistant",
+  //   icon: Bot,
+  // },
 ];
 
 export default function TeacherSidebar({

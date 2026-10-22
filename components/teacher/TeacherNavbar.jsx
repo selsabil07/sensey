@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Menu, ChevronDown, UserRound } from "lucide-react";
+import { Menu, ChevronDown, UserRound, Image } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 const pageTitles = [
@@ -19,6 +19,7 @@ const pageTitles = [
 export default function TeacherNavbar({ onMenuClick }) {
   const pathname = usePathname();
   const [teacherName, setTeacherName] = useState("Teacher");
+  const [avatarUrl, setAvatarUrl] = useState("");
   const [email, setEmail] = useState("");
 
   useEffect(() => {
@@ -38,7 +39,7 @@ export default function TeacherNavbar({ onMenuClick }) {
 
       const { data: profile } = await supabase
         .from("profiles")
-        .select("full_name, role")
+        .select("full_name, role , avatar_url")
         .eq("id", user.id)
         .maybeSingle();
 
@@ -46,6 +47,7 @@ export default function TeacherNavbar({ onMenuClick }) {
 
       if (profile?.role === "teacher") {
         setTeacherName(profile.full_name || "Teacher");
+        setAvatarUrl(profile.avatar_url || "");
       }
     }
 
@@ -110,10 +112,23 @@ export default function TeacherNavbar({ onMenuClick }) {
         </div>
 
         <div
-          title={teacherName}
+          title={avatarUrl ? "Profile picture" : teacherName}
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#fff0e9] text-sm font-bold text-[#fe5933]"
         >
-          {initials || <UserRound size={19} />}
+          {avatarUrl ? (
+          <img
+            src={avatarUrl}
+            alt={`${teacherName}'s profile picture`}
+            className="h-full w-full rounded-full object-cover"
+            onLoad={() => console.log("Teacher avatar loaded")}
+            onError={(event) => {
+              console.error("Teacher avatar failed to load:", avatarUrl);
+              event.currentTarget.style.display = "none";
+            }}
+          />
+          ) : (
+            <UserRound size={19} />
+          )}
         </div>
 
         <ChevronDown
