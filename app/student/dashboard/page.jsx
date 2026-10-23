@@ -42,13 +42,13 @@ export default function DashboardPage() {
 
       switch (profile.role) {
         case 'student':
-          router.replace('/student')
+          router.replace('/student/dashboard')
           break
         case 'teacher':
-          router.replace('/teacher')
+          router.replace('/teacher/dashboard')
           break
         case 'admin':
-          router.replace('/admin')
+          router.replace('/admin/dashboard')
           break
         default:
           router.replace('/sign-in')
