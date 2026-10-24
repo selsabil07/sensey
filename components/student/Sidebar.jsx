@@ -26,7 +26,7 @@ const navigationGroups = [
     items: [
       { label: "Dashboard", href: "/student/dashboard", icon: LayoutDashboard },
       { label: "My Courses", href: "/student/courses", icon: BookOpen },
-      { label: "Schedule", href: "/student/schedule", icon: CalendarDays },
+      // { label: "Schedule", href: "/student/schedule", icon: CalendarDays },
       {
         label: "Quizzes & Assignments",
         href: "/student/quizzes",
