@@ -19,6 +19,7 @@ import {
 
 import { createClient } from "@/lib/supabase/client";
 import SummaryCard from "@/components/student/SummaryCard";
+import EmptyState from "@/components/student/EmptyState";
 
 const COLORS = {
   navy: "#0b1b33",
@@ -27,12 +28,6 @@ const COLORS = {
   teal: "#20b8a6",
   purple: "#9274e8",
 };
-
-const TYPE_FILTERS = ["All", "Online quizzes", "Quiz PDFs"];
-const SORT_OPTIONS = [
-  { label: "Newest first", value: "newest" },
-  { label: "Oldest first", value: "oldest" },
-];
 
 function normalizeRelation(value) {
   return Array.isArray(value) ? value[0] : value;
@@ -145,34 +140,6 @@ function ResourceCard({ item, onOpen }) {
   );
 }
 
-function EmptyState({ hasSearch, onReset }) {
-  return (
-    <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-5 py-14 text-center">
-      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 text-[#4776e6]">
-        <Inbox size={30} />
-      </div>
-
-      <h3 className="mt-5 text-xl font-bold text-[#0b1b33]">
-        {hasSearch ? "No matching results" : "No quizzes yet"}
-      </h3>
-
-      <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
-        {hasSearch
-          ? "Try another search term or change your filters."
-          : "Online quizzes and quiz PDFs for your enrolled courses will appear here when your teachers add them."}
-      </p>
-
-      {hasSearch && (
-        <button
-          onClick={onReset}
-          className="mt-5 rounded-xl bg-slate-100 px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-200"
-        >
-          Clear filters
-        </button>
-      )}
-    </div>
-  );
-}
 
 export default function StudentQuizzesPage() {
   const router = useRouter();
@@ -415,19 +382,9 @@ export default function StudentQuizzesPage() {
             </h1>
 
             <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500 sm:text-base">
-              Take online quizzes, or open quiz PDFs shared by your teachers.
+              open quiz PDFs shared by your teachers.
             </p>
           </div>
-
-          <button
-            type="button"
-            onClick={() => loadItems({ refresh: true })}
-            disabled={loading || refreshing}
-            className="inline-flex items-center justify-center gap-2 self-start rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-60 sm:self-auto"
-          >
-            <RefreshCw size={16} className={refreshing ? "animate-spin" : ""} />
-            Refresh
-          </button>
         </section>
 
         {/* Summary */}
@@ -483,43 +440,12 @@ export default function StudentQuizzesPage() {
 
             <div className="flex items-center gap-2 text-sm font-medium text-slate-500">
               <Filter size={17} />
-              Filter quizzes or sort by date
+              Filter quizzes sort by date
             </div>
           </div>
 
           <div className="mt-5 flex flex-col gap-4 border-t border-slate-100 pt-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-            <div className="flex flex-wrap gap-2">
-              {TYPE_FILTERS.map((filter) => {
-                const active = typeFilter === filter;
-
-                return (
-                  <button
-                    key={filter}
-                    type="button"
-                    onClick={() => setTypeFilter(filter)}
-                    className="rounded-xl px-4 py-2.5 text-sm font-semibold transition"
-                    style={{
-                      backgroundColor: active ? COLORS.navy : "#f1f5f9",
-                      color: active ? "#fff" : "#64748b",
-                    }}
-                  >
-                    {filter}
-                  </button>
-                );
-              })}
-            </div>
-
-            <select
-              value={sortOrder}
-              onChange={(event) => setSortOrder(event.target.value)}
-              className="rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm font-medium text-slate-700 outline-none focus:border-[#4776e6] focus:ring-4 focus:ring-blue-100"
-            >
-              {SORT_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+            
           </div>
         </section>
 
