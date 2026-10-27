@@ -17,6 +17,7 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import CourseCard from "@/components/public/CoursCard";
 import Navbar from "@/components/public/Navbar";
+import Hero from "@/components/public/Hero";
 
 const features = [
   {
@@ -99,140 +100,7 @@ export default function HomePage() {
       <Navbar />
 
       {/* HERO */}
-      <section className="relative isolate overflow-hidden bg-gradient-to-br from-white via-white to-blue-50/70">
-        <div className="absolute -right-32 top-12 -z-10 h-96 w-96 rounded-full bg-blue-100/50 blur-3xl" />
-        <div className="absolute -left-32 bottom-0 -z-10 h-72 w-72 rounded-full bg-orange-100/50 blur-3xl" />
-
-        <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 py-16 sm:px-8 md:grid-cols-2 md:py-24">
-          <div>
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-orange-100 bg-orange-50 px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#fe5933]">
-              <Sparkles size={15} />
-              Learn. Grow. Succeed.
-            </div>
-
-            <h1 className="max-w-2xl text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
-              Your journey to a brighter future starts with{" "}
-              <span className="text-[#fe5933]">Sensey.</span>
-            </h1>
-
-            <p className="mt-6 max-w-xl text-base leading-8 text-slate-600 sm:text-lg">
-              Discover courses, develop new skills, and take control of your
-              learning journey — all in one place.
-            </p>
-
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href="/courses"
-                className="inline-flex items-center gap-2 rounded-xl bg-[#fe5933] px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-orange-500/20 transition hover:-translate-y-0.5 hover:bg-[#e94b28]"
-              >
-                Browse courses
-                <ArrowRight size={18} />
-              </Link>
-
-              <a
-                href="#about"
-                className="rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-sm font-bold text-[#0b1b33] transition hover:border-[#4776e6] hover:bg-blue-50"
-              >
-                Learn more
-              </a>
-            </div>
-
-            <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-slate-600">
-              <span className="flex items-center gap-2">
-                <ShieldCheck size={17} className="text-emerald-600" />
-                Student-friendly
-              </span>
-              <span className="flex items-center gap-2">
-                <BookOpen size={17} className="text-[#4776e6]" />
-                Courses in one place
-              </span>
-            </div>
-          </div>
-
-          {/* CSS illustration: no additional image asset required */}
-          <div className="relative mx-auto w-full max-w-xl">
-            <div className="absolute left-1/2 top-1/2 h-[80%] w-[80%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#4776e6]/15" />
-            <div className="absolute right-2 top-6 h-24 w-24 rounded-full bg-[#fe5933]/15 blur-2xl" />
-
-            <div className="relative rounded-[2rem] border border-white bg-white/80 p-5 shadow-2xl shadow-blue-900/10 backdrop-blur sm:p-8">
-              <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-5">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                    Your learning space
-                  </p>
-                  <h2 className="mt-1 text-xl font-extrabold">
-                    Keep growing.
-                  </h2>
-                </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-50 text-[#fe5933]">
-                  <GraduationCap size={27} />
-                </div>
-              </div>
-
-              <div className="mt-6 space-y-4">
-                <div className="rounded-2xl bg-[#0b1b33] p-5 text-white">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="text-xs font-medium text-blue-200">
-                        YOUR NEXT STEP
-                      </p>
-                      <h3 className="mt-2 text-xl font-bold">
-                        Discover something new
-                      </h3>
-                      <p className="mt-2 text-sm leading-6 text-slate-300">
-                        Find a course that matches your goals.
-                      </p>
-                    </div>
-                    <BookOpen
-                      size={29}
-                      className="shrink-0 text-[#fe5933]"
-                    />
-                  </div>
-                  <Link
-                    href="/courses"
-                    className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-orange-300 hover:text-white"
-                  >
-                    Explore learning
-                    <ArrowRight size={16} />
-                  </Link>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="rounded-2xl border border-slate-100 bg-white p-4">
-                    <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-[#4776e6]">
-                      <GraduationCap size={22} />
-                    </div>
-                    <p className="font-bold">Learn</p>
-                    <p className="mt-1 text-xs leading-5 text-slate-500">
-                      Build your knowledge
-                    </p>
-                  </div>
-
-                  <div className="rounded-2xl border border-slate-100 bg-white p-4">
-                    <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-                      <Sparkles size={22} />
-                    </div>
-                    <p className="font-bold">Grow</p>
-                    <p className="mt-1 text-xs leading-5 text-slate-500">
-                      Develop new skills
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="absolute -left-3 top-1/4 hidden items-center gap-3 rounded-2xl border border-slate-100 bg-white p-3 shadow-xl sm:flex">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50 text-[#fe5933]">
-                <GraduationCap size={23} />
-              </div>
-              <div>
-                <p className="text-sm font-bold">Keep learning</p>
-                <p className="text-xs text-slate-500">One step at a time</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <Hero />
 
       {/* FEATURES */}
       <section id="about" className="border-y border-slate-100 bg-slate-50/80">

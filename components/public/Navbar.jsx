@@ -91,7 +91,7 @@ const Navbar = () => {
             </nav>
         )}
         </header> */}
-        <div className='fixed top-0 z-50 rounded-4xl border-2 border-blue-100 h-16 w-11/12 m-4 flex justify-between backdrop-blur-xl bg-white/50 font-bold'>
+        <div className='fixed top-0 z-50 rounded-4xl border-2 border-blue-100 h-16 w-[90%] m-4 flex justify-between backdrop-blur-xl bg-white/50 font-bold'>
             <div className='p-2'>
                 <Link href={'/'}>
                 <img src="/images/logo.png" alt="logo" width={40} height={30}/>
