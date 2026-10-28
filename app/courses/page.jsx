@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import CourseCard from "@/components/public/CoursCard";
+import Navbar from "@/components/public/Navbar";
+import Footer from "@/components/public/Footer";
 
 export default function CoursesPage() {
   const router = useRouter();
@@ -213,8 +215,9 @@ const loadCourses = useCallback(async () => {
 
   return (
     <main className="min-h-screen bg-[#f7f8fc] text-[#0b1b33]">
+      <Navbar />
       {/* Hero */}
-      <section className="relative overflow-hidden bg-[#0b1b33] px-5 py-20 text-white sm:px-8 lg:py-28">
+      <section className="relative overflow-hidden bg-[#0b1b33] px-5 py-8 mt-12 text-white sm:px-8 lg:py-12 rounded-4xl">
         <div className="pointer-events-none absolute -right-24 -top-28 h-80 w-80 rounded-full bg-[#fe5933]/20 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-36 left-1/4 h-80 w-80 rounded-full bg-[#4776e6]/20 blur-3xl" />
 
@@ -422,8 +425,11 @@ const loadCourses = useCallback(async () => {
               })}
             </div>
           </>
+        
         )}
+          
       </section>
+      <Footer />
     </main>
   );
 }

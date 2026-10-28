@@ -13,7 +13,7 @@ const PERKS = ["Free to browse", "Learn at your own pace", "Taught by real teach
 
 export default function Hero() {
   return (
-    <section className="relative overflow-hidden bg-[#fff8f4] p-3">
+    <section className="relative overflow-hidden bg-[#fff8f4] w-full">
       <style>{`
         @keyframes sensey-float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-10px) } }
         .sensey-float { animation: sensey-float 6s ease-in-out infinite; }
@@ -27,14 +27,13 @@ export default function Hero() {
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-[0.35]"
         style={{
-          // backgroundImage: "radial-gradient(#0b1b33 0.8px, transparent 0.8px)",
-          backgroundSize: "28px 28px",
+          // backgroundSize: "28px 28px",
           maskImage: "radial-gradient(ellipse at 70% 40%, black 0%, transparent 65%)",
           WebkitMaskImage: "radial-gradient(ellipse at 70% 40%, black 0%, transparent 65%)",
         }}
       />
 
-      <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-5 pb-20 pt-10 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:pb-28 lg:pt-16">
+      <div className="relative  grid  items-center gap-14 px-5 pb-10 pt-10 lg:grid-cols-[1.05fr_0.95fr] lg:pb-14 lg:pt-16">
         {/* Copy */}
         <div>
           <p className="inline-flex items-center gap-2 rounded-full border border-[#fe5933]/25 bg-white px-3.5 py-1.5 text-xs font-semibold text-[#c8401f] shadow-sm">
@@ -55,7 +54,8 @@ export default function Hero() {
           </p>
 
           {/* Search */}
-          <form action="/courses" method="get" role="search" className="mt-9 flex max-w-xl items-center gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl shadow-slate-900/5 focus-within:border-[#fe5933]/60 focus-within:ring-4 focus-within:ring-[#fe5933]/15">
+          
+          {/* <form action="/courses" method="get" role="search" className="mt-9 flex max-w-xl items-center gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl shadow-slate-900/5 focus-within:border-[#fe5933]/60 focus-within:ring-4 focus-within:ring-[#fe5933]/15">
             <label htmlFor="hero-search" className="sr-only">Search courses</label>
             <Search size={20} className="ml-3 shrink-0 text-slate-400" />
             <input
@@ -84,7 +84,7 @@ export default function Hero() {
                 {s}
               </Link>
             ))}
-          </div>
+          </div> */}
 
           <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4">
             <Link
@@ -94,7 +94,7 @@ export default function Hero() {
               Browse courses
               <ArrowRight size={16} className="transition group-hover:translate-x-0.5" />
             </Link>
-            <Link href="/sign-up" className="inline-flex items-center gap-2 text-sm font-bold text-[#0b1b33] underline decoration-[#fe5933] decoration-2 underline-offset-4 hover:text-[#c8401f]">
+            <Link href="/sign-in" className="inline-flex items-center gap-2 text-sm font-bold text-[#0b1b33] underline decoration-[#fe5933] decoration-2 underline-offset-4 hover:text-[#c8401f]">
               <GraduationCap size={18} /> Teach on Sensey
             </Link>
           </div>

@@ -1,167 +1,146 @@
-import { Menu, X } from 'lucide-react';
-import Link from 'next/link'
-import React, { useState } from 'react'
-
+"use client";
+ 
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { ArrowRight, Menu, X } from "lucide-react";
+ 
+const LINKS = [
+  { href: "/", label: "Home" },
+  { href: "/courses", label: "Courses" },
+  // { href: "/teachers", label: "Teachers" },
+  { href: "/aboutus", label: "About us" },
+  { href: "/contactus", label: "Contact us" },
+];
+ 
 const Navbar = () => {
-    const [menuOpen, setMenuOpen] = useState(false);
-
+  const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+ 
+  const isActive = (href) =>
+    href === "/" ? pathname === "/" : pathname.startsWith(href);
+ 
+  // Close the mobile menu after navigating.
+  useEffect(() => setMenuOpen(false), [pathname]);
+ 
+  // Stronger shadow once the page scrolls.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+ 
+  // Escape closes the menu.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e) => e.key === "Escape" && setMenuOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
+ 
+  const focusRing =
+    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#fe5933]";
+ 
   return (
-    <div className='bg-white'>
-        {/* <header className="sticky  top-0 z-50 border-b border-slate-100 bg-white/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
-            <div
-            href="/"
-            className="text-2xl font-extrabold tracking-tight"
-            aria-label="Sensey home"
-            >
-                <img src="logo.png" alt="" href={'/'} />
-            </div>
-
-            <nav className="hidden items-center gap-8 md:flex">
+    <header className="fixed inset-x-0 top-4 z-50 mx-auto w-[calc(100%-2rem)] max-w-6xl">
+      {/* Pill */}
+      <div
+        className={`flex h-16 items-center justify-between rounded-full border border-slate-200/70 bg-white/70 px-3 backdrop-blur-xl transition-shadow duration-300 ${
+          scrolled ? "shadow-lg shadow-slate-900/10" : "shadow-sm"
+        }`}
+      >
+        <Link href="/" aria-label="Sensey home" className={`rounded-full p-2 ${focusRing}`}>
+          <Image src="/images/logo.png" alt="Sensey" width={40} height={30} priority className="h-8 w-auto" />
+        </Link>
+ 
+        <nav aria-label="Main" className="hidden items-center gap-1 md:flex">
+          {LINKS.map(({ href, label }) => (
             <Link
-                href="/"
-                className="text-sm font-semibold text-[#fe5933]"
+              key={href}
+              href={href}
+              aria-current={isActive(href) ? "page" : undefined}
+              className={`rounded-full px-3.5 py-2 text-sm font-semibold transition ${focusRing} ${
+                isActive(href)
+                  ? "bg-[#fe5933]/10 text-[#e94b28]"
+                  : "text-slate-700 hover:bg-slate-900/5 hover:text-[#fe5933]"
+              }`}
             >
-                Home
+              {label}
             </Link>
-            <Link
-                href="/courses"
-                className="text-sm font-medium text-slate-600 transition hover:text-[#fe5933]"
-            >
-                Courses
-            </Link>
-            <a
-                href="#about"
-                className="text-sm font-medium text-slate-600 transition hover:text-[#fe5933]"
-            >
-                About
-            </a>
-            </nav>
-
-            <div className="hidden items-center gap-3 md:flex">
-            <Link
-                href="/sign-in"
-                className="rounded-xl border border-slate-300 px-5 py-2.5 text-sm font-semibold transition hover:border-[#0b1b33] hover:bg-slate-50"
-            >
-                Sign in
-            </Link>
-
-            <Link
-                href="/courses"
-                className="rounded-xl bg-[#fe5933] px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-[#e94b28]"
-            >
-                Get started
-            </Link>
-            </div>
-
-            <button
-            type="button"
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="rounded-lg p-2 text-[#0b1b33] hover:bg-slate-100 md:hidden"
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
-            aria-expanded={menuOpen}
-            >
-            {menuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+          ))}
+        </nav>
+ 
+        <div className="hidden items-center gap-1 md:flex">
+          <Link
+            href="/sign-in"
+            className={`rounded-full px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-900/5 ${focusRing}`}
+          >
+            Sign in
+          </Link>
+          <Link
+            href="/sign-up"
+            className={`rounded-full bg-[#fe5933] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-[#e94b28] ${focusRing}`}
+          >
+            Get started
+          </Link>
         </div>
-
-        {menuOpen && (
-            <nav className="border-t border-slate-100 bg-white px-5 py-4 md:hidden">
-            <div className="mx-auto flex max-w-7xl flex-col gap-4">
-                <Link href="/" onClick={() => setMenuOpen(false)}>
-                Home
-                </Link>
-                <Link href="/courses" onClick={() => setMenuOpen(false)}>
-                Courses
-                </Link>
-                <a href="#about" onClick={() => setMenuOpen(false)}>
-                About
-                </a>
-                <Link href="/sign-in" onClick={() => setMenuOpen(false)}>
-                Sign in
-                </Link>
+ 
+        <button
+          type="button"
+          onClick={() => setMenuOpen((open) => !open)}
+          className={`mr-1 rounded-full p-2.5 text-[#0b1b33] transition hover:bg-slate-900/5 md:hidden ${focusRing}`}
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={menuOpen}
+          aria-controls="mobile-menu"
+        >
+          {menuOpen ? <X size={22} /> : <Menu size={22} />}
+        </button>
+      </div>
+ 
+      {/* Mobile panel */}
+      {menuOpen && (
+        <nav
+          id="mobile-menu"
+          aria-label="Mobile"
+          className="mt-2 rounded-3xl border border-slate-200/70 bg-white p-3 shadow-xl shadow-slate-900/10 md:hidden"
+        >
+          <ul className="flex flex-col">
+            {LINKS.map(({ href, label }) => (
+              <li key={href}>
                 <Link
-                href="/courses"
-                onClick={() => setMenuOpen(false)}
-                className="rounded-xl bg-[#fe5933] px-4 py-3 text-center font-bold text-white"
+                  href={href}
+                  aria-current={isActive(href) ? "page" : undefined}
+                  className={`block rounded-2xl px-4 py-3 text-base font-semibold ${focusRing} ${
+                    isActive(href) ? "bg-[#fe5933]/10 text-[#e94b28]" : "text-slate-800 hover:bg-slate-50"
+                  }`}
                 >
-                Explore courses
+                  {label}
                 </Link>
-            </div>
-            </nav>
-        )}
-        </header> */}
-        <div className='fixed top-0 z-50 rounded-4xl border-2 border-blue-100 h-16 w-[90%] m-4 flex justify-between backdrop-blur-xl bg-white/50 font-bold'>
-            <div className='p-2'>
-                <Link href={'/'}>
-                <img src="/images/logo.png" alt="logo" width={40} height={30}/>
-                </Link>
-            </div>
-            <div className='py-4 text-sm text'>
-                <Link href={"/"} className='hover:text-[#fe5933]'>
-                Home
-                </Link>
-                <Link href={"/courses"} className='hover:text-[#fe5933] p-3'>
-                Courses
-                </Link>
-                <Link href={"/teachers"} className='hover:text-[#fe5933] p-3'>
-                Teachers
-                </Link>
-                <Link href={"/aboutus"} className='hover:text-[#fe5933] p-3'>
-                About Us
-                </Link>
-                <Link href={"/contactus"} className='hover:text-[#fe5933] p-3'>
-                Contact Us
-                </Link>
-            </div>
-            <div className='p-2'>
-                <button className='bg-[#fe5933] p-2 rounded-xl text-white text-sm '
-                 href={"/signup"}>
-                    Get started
-                </button>
-                <button className='p-2 bourder-2 border-blue-400 rounded-xl'>
-                    Sign in
-                </button>
-            </div>
-            <button
-                type="button"
-                onClick={() => setMenuOpen(!menuOpen)}
-                className="rounded-lg p-2 text-[#0b1b33] hover:bg-slate-100 md:hidden"
-                aria-label={menuOpen ? "Close menu" : "Open menu"}
-                aria-expanded={menuOpen}
-                >
-                {menuOpen ? <X size={24} /> : <Menu size={24} />}
-                </button>
-                
-        {menuOpen && (
-            <nav className="border-t border-slate-100 bg-white px-5 py-4 md:hidden">
-            <div className="mx-auto flex max-w-7xl flex-col gap-4">
-                <Link href="/" onClick={() => setMenuOpen(false)}>
-                Home
-                </Link>
-                <Link href="/courses" onClick={() => setMenuOpen(false)}>
-                Courses
-                </Link>
-                <a href="#about" onClick={() => setMenuOpen(false)}>
-                About
-                </a>
-                <Link href="/sign-in" onClick={() => setMenuOpen(false)}>
-                Sign in
-                </Link>
-                <Link
-                href="/courses"
-                onClick={() => setMenuOpen(false)}
-                className="rounded-xl bg-[#fe5933] px-4 py-3 text-center font-bold text-white"
-                >
-                Explore courses
-                </Link>
-            </div>
-            </nav>
-        )}
-
-        </div>
-    </div>
-  )
-}
-
-export default Navbar
+              </li>
+            ))}
+          </ul>
+ 
+          <div className="mt-3 grid gap-2 border-t border-slate-100 pt-3">
+            <Link
+              href="/sign-in"
+              className={`rounded-2xl border border-slate-200 px-4 py-3 text-center text-base font-semibold text-slate-800 hover:bg-slate-50 ${focusRing}`}
+            >
+              Sign in
+            </Link>
+            <Link
+              href="/sign-up"
+              className={`flex items-center justify-center gap-2 rounded-2xl bg-[#fe5933] px-4 py-3 text-base font-bold text-white hover:bg-[#e94b28] ${focusRing}`}
+            >
+              Get started <ArrowRight size={16} />
+            </Link>
+          </div>
+        </nav>
+      )}
+    </header>
+  );
+};
+ 
+export default Navbar;
