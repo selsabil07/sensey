@@ -1,7 +1,7 @@
 "use Client"
 
 
-function StatCard({ title, value, subtitle, icon: Icon, color, loading }) {
+function StatCard({ title, value, subtitle, icon: Icon, color, loading, completedLessons }) {
   return (
     <div className="flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-5">
       <div

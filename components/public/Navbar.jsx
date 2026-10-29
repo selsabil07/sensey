@@ -81,7 +81,7 @@ const Navbar = () => {
             Sign in
           </Link>
           <Link
-            href="/sign-up"
+            href="/signup"
             className={`rounded-full bg-[#fe5933] px-5 py-2.5 text-sm font-bold text-white transition hover:bg-[#e94b28] ${focusRing}`}
           >
             Get started

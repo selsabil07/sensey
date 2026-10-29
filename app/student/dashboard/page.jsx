@@ -212,7 +212,7 @@ export default function StudentDashboardPage() {
 
           <StatCard
             title="Completed lessons"
-            value={completedLessons}
+            value={ completedLessons }
             subtitle="Lessons marked complete"
             icon={CheckCircle2}
             color={COLORS.teal}
