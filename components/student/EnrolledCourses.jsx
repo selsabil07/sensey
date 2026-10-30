@@ -1,5 +1,5 @@
 import React from 'react'
-import { ArrowRight, Search,BookMarked, Clock3 } from 'lucide-react'
+import { ArrowRight, Search,BookMarked, Clock3, BookOpen, Play } from 'lucide-react'
 import Link from 'next/link'
 
 
@@ -18,6 +18,18 @@ function CourseSkeleton() {
 }
 
 const EnrolledCourses = ({search, filteredCourses, loading, error}) => {
+
+  function formatDate(date) {
+    if (!date) return "Recently enrolled";
+  
+    return new Date(date).toLocaleDateString("en", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  }
+  
+
   return (
     <div>
       <section aria-labelledby="courses-heading">

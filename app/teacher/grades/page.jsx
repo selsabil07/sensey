@@ -376,6 +376,7 @@ export default function TeacherGradesPage() {
         row.studentName.toLowerCase().includes(query) ||
         row.email.toLowerCase().includes(query) ||
         row.courseTitle.toLowerCase().includes(query);
+        
 
       const matchesCourse =
         courseFilter === "all" || row.courseId === courseFilter;
@@ -696,113 +697,7 @@ export default function TeacherGradesPage() {
           </div>
         )}
 
-        {/* Grades table */}
-        {tab === "grades" && (
-          <div className="mt-4 overflow-x-auto">
-            <table className="w-full min-w-[700px] text-left">
-              <thead>
-                <tr className="border-b border-slate-100 text-xs uppercase tracking-wide text-slate-400">
-                  <th className="px-3 py-4 font-semibold">Student</th>
-                  <th className="px-3 py-4 font-semibold">Quiz</th>
-                  <th className="px-3 py-4 font-semibold">Course</th>
-                  <th className="px-3 py-4 font-semibold">Score</th>
-                  <th className="px-3 py-4 font-semibold">Status</th>
-                  <th className="px-3 py-4 font-semibold">Date</th>
-                </tr>
-              </thead>
-
-              <tbody className="divide-y divide-slate-100">
-                {filteredGrades.map((row) => (
-                  <tr key={row.id} className="hover:bg-slate-50/70">
-                    <td className="px-3 py-4">
-                      <p className="font-semibold text-slate-800">
-                        {row.studentName}
-                      </p>
-                      <p className="mt-0.5 text-xs text-slate-500">
-                        {row.email}
-                      </p>
-                    </td>
-
-                    <td className="px-3 py-4 font-medium text-slate-800">
-                      {row.quizTitle}
-                    </td>
-
-                    <td className="px-3 py-4 text-sm text-slate-600">
-                      {row.courseTitle}
-                    </td>
-
-                    <td className="px-3 py-4">
-                      {row.score === null ? (
-                        <span className="text-sm text-slate-400">
-                          Not graded
-                        </span>
-                      ) : (
-                        <span
-                          className="font-bold"
-                          style={{
-                            color:
-                              row.score >= 50
-                                ? COLORS.teal
-                                : COLORS.orange,
-                          }}
-                        >
-                          {row.score.toLocaleString(undefined, {
-                            maximumFractionDigits: 2,
-                          })}%
-                        </span>
-                      )}
-                    </td>
-
-                    <td className="px-3 py-4">
-                      <span
-                        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${
-                          row.completedAt
-                            ? "bg-emerald-50 text-emerald-700"
-                            : "bg-amber-50 text-amber-700"
-                        }`}
-                      >
-                        {row.completedAt ? (
-                          <CheckCircle2 size={13} />
-                        ) : (
-                          <Clock3 size={13} />
-                        )}
-                        {row.completedAt ? "Completed" : "In progress"}
-                      </span>
-                    </td>
-
-                    <td className="px-3 py-4 text-sm text-slate-500">
-                      {formatDate(row.completedAt || row.startedAt)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            {filteredGrades.length === 0 && (
-              <div className="py-14 text-center">
-                <Award
-                  size={30}
-                  className="mx-auto text-slate-300"
-                />
-                <p className="mt-3 font-semibold text-slate-700">
-                  No quiz results yet
-                </p>
-                <p className="mx-auto mt-1 max-w-md text-sm text-slate-500">
-                  Results appear here when students have attempts
-                  recorded for quizzes attached to your course lessons.
-                  Uploaded PDF files alone do not generate grades.
-                </p>
-              </div>
-            )}
-          </div>
-        )}
       </div>
-
-      <p className="text-xs leading-5 text-slate-400">
-        Progress is calculated from completed lessons divided by the
-        total lessons in each enrolled course. Quiz averages use
-        completed attempts with recorded scores.
-      </p>
     </div>
   );
 }

@@ -19,16 +19,6 @@ const COLORS = {
   purple: "#9274e8",
 };
 
-function formatDate(date) {
-  if (!date) return "Recently enrolled";
-
-  return new Date(date).toLocaleDateString("en", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-}
-
 /* ---------- Page ---------- */
 
 export default function StudentDashboardPage() {
@@ -188,10 +178,11 @@ export default function StudentDashboardPage() {
 
       {/* Welcome */}
       <Welcome 
-      loading= {loading}
-      courses= {courses}
-      latestCourse={latestCourse}
-      firstName={firstName}
+        loading= {loading}
+        courses= {courses}
+        latestCourse={latestCourse}
+        firstName={firstName}
+        completedLessons = {completedLessons}
        />
 
       {/* Learning statistics */}

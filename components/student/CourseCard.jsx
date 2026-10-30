@@ -1,6 +1,8 @@
+import { ArrowRight, BookMarked, BookOpen, Play } from "lucide-react";
+import Link from "next/link";
 
 
-export default function CourseCard({ course, index }) {
+export default function CourseCard({ course, index, COLORS }) {
   const accentColors = [
     COLORS.blue,
     COLORS.orange,
@@ -10,10 +12,20 @@ export default function CourseCard({ course, index }) {
 
   const accent = accentColors[index % accentColors.length];
 
+  function formatDate(date) {
+    if (!date) return "Recently added";
+  
+    return new Date(date).toLocaleDateString(undefined, {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  }
+
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-200/60">
       <Link
-        href={`/student/courses/${course.id}`}
+        href={`/courses/${course.id}`}
         className="relative block aspect-[16/9] overflow-hidden bg-slate-100"
         aria-label={`Open ${course.title}`}
       >
@@ -79,7 +91,7 @@ export default function CourseCard({ course, index }) {
 
         <div className="mt-5 border-t border-slate-100 pt-4">
           <Link
-            href={`/student/courses/${course.id}`}
+            href={`/courses/${course.id}`}
             className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold transition"
             style={{
               color: COLORS.navy,

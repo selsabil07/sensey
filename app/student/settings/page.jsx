@@ -475,7 +475,7 @@ export default function StudentSettingsPage() {
           </div>
 
           {/* Account summary */}
-          <aside className="space-y-6">
+          {/* <aside className="space-y-6">
             <div className="rounded-2xl bg-[#0b1b33] p-6 text-white shadow-sm">
               <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10">
                 <UserRound size={26} />
@@ -529,7 +529,7 @@ export default function StudentSettingsPage() {
                 credentials with anyone.
               </p>
             </div>
-          </aside>
+          </aside> */}
 
         </div>
       </div>

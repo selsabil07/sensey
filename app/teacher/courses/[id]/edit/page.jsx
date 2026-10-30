@@ -19,6 +19,7 @@ import {
   Trash2,
   X,
 } from "lucide-react";
+import Lessoncreate from "@/components/teacher/Lessoncreate";
 
 const emptyLesson = {
   title: "",
@@ -39,6 +40,7 @@ export default function CourseEditorPage() {
     subject: "",
     level: "",
   });
+  const [lessonPdf, setLessonPdf] = useState(null);
   const [lessons, setLessons] = useState([]);
   const [lessonForm, setLessonForm] = useState(emptyLesson);
   const [editingLessonId, setEditingLessonId] = useState(null);
@@ -105,7 +107,7 @@ export default function CourseEditorPage() {
       const { data: lessonData, error: lessonError } = await supabase
         .from("lessons")
         .select(
-          "id, course_id, title, description, content, order_index, created_at, updated_at"
+          "id, course_id, title, description, content, order_index, pdf_path, created_at, updated_at"
         )
         .eq("course_id", courseId)
         .order("order_index", { ascending: true });
@@ -183,81 +185,151 @@ export default function CourseEditorPage() {
     setSuccess("");
   }
 
-  async function saveLesson(event) {
-    event.preventDefault();
-    setError("");
-    setSuccess("");
 
-    if (!lessonForm.title.trim()) {
-      setError("Enter a title for this lesson.");
-      return;
-    }
+async function saveLesson(event) {
+  event.preventDefault();
+  setError("");
+  setSuccess("");
 
-    setSavingLesson(true);
+  if (!lessonForm.title.trim()) {
+    setError("Enter a title for this lesson.");
+    return;
+  }
 
-    try {
-      const payload = {
-        title: lessonForm.title.trim(),
-        description: lessonForm.description.trim() || null,
-        content: lessonForm.content.trim() || null,
-        updated_at: new Date().toISOString(),
-      };
+  setSavingLesson(true);
 
-      if (editingLessonId) {
-        const { data, error: updateError } = await supabase
-          .from("lessons")
-          .update(payload)
-          .eq("id", editingLessonId)
-          .eq("course_id", courseId)
-          .select()
-          .single();
+  let uploadedPdfPath = null;
 
-        if (updateError) throw updateError;
+  try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
-        setLessons((previous) =>
-          previous.map((lesson) =>
-            lesson.id === editingLessonId ? data : lesson
-          )
-        );
+    if (authError) throw authError;
+    if (!user) throw new Error("Please sign in again.");
 
-        setSuccess("Lesson updated successfully.");
-      } else {
-        const nextOrder =
-          lessons.length > 0
-            ? Math.max(...lessons.map((lesson) => lesson.order_index)) + 1
-            : 0;
+    // Keep the existing PDF when editing without selecting a new one.
+    const existingLesson = lessons.find(
+      (lesson) => lesson.id === editingLessonId
+    );
 
-        const { data, error: insertError } = await supabase
-          .from("lessons")
-          .insert({
-            course_id: courseId,
-            ...payload,
-            order_index: nextOrder,
-          })
-          .select()
-          .single();
+    let pdfPath = existingLesson?.pdf_path || null;
 
-        if (insertError) throw insertError;
-
-        setLessons((previous) =>
-          [...previous, data].sort(
-            (a, b) => a.order_index - b.order_index
-          )
-        );
-
-        setSuccess("Lesson added successfully.");
+    // Upload a newly selected PDF.
+    if (lessonPdf) {
+      if (lessonPdf.type !== "application/pdf") {
+        throw new Error("Please select a PDF file.");
       }
 
-      setShowLessonForm(false);
-      setEditingLessonId(null);
-      setLessonForm(emptyLesson);
-    } catch (err) {
-      console.error("Save lesson error:", err);
-      setError(err.message || "Could not save this lesson.");
-    } finally {
-      setSavingLesson(false);
+      if (lessonPdf.size > 10 * 1024 * 1024) {
+        throw new Error("The PDF must be smaller than 10 MB.");
+      }
+
+      const filePath = `${user.id}/${courseId}/${crypto.randomUUID()}.pdf`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("lesson-pdfs")
+        .upload(filePath, lessonPdf, {
+          contentType: "application/pdf",
+          upsert: false,
+        });
+
+      if (uploadError) throw uploadError;
+
+      uploadedPdfPath = filePath;
+      pdfPath = filePath;
     }
+
+    const payload = {
+      title: lessonForm.title.trim(),
+      description: lessonForm.description.trim() || null,
+      content: lessonForm.content.trim() || null,
+      pdf_path: pdfPath,
+      updated_at: new Date().toISOString(),
+    };
+
+    if (editingLessonId) {
+      const { data, error: updateError } = await supabase
+        .from("lessons")
+        .update(payload)
+        .eq("id", editingLessonId)
+        .eq("course_id", courseId)
+        .select()
+        .single();
+
+      if (updateError) throw updateError;
+
+      setLessons((previous) =>
+        previous.map((lesson) =>
+          lesson.id === editingLessonId ? data : lesson
+        )
+      );
+
+      // Remove the old PDF only after the database update succeeds.
+      if (
+        uploadedPdfPath &&
+        existingLesson?.pdf_path &&
+        existingLesson.pdf_path !== uploadedPdfPath
+      ) {
+        const { error: removeError } = await supabase.storage
+          .from("lesson-pdfs")
+          .remove([existingLesson.pdf_path]);
+
+        if (removeError) {
+          console.error("Old PDF cleanup failed:", removeError);
+        }
+      }
+
+      setSuccess("Lesson updated successfully.");
+    } else {
+      const nextOrder =
+        lessons.length > 0
+          ? Math.max(...lessons.map((lesson) => lesson.order_index)) + 1
+          : 0;
+
+      const { data, error: insertError } = await supabase
+        .from("lessons")
+        .insert({
+          course_id: courseId,
+          ...payload,
+          order_index: nextOrder,
+        })
+        .select()
+        .single();
+
+      if (insertError) throw insertError;
+
+      setLessons((previous) =>
+        [...previous, data].sort(
+          (a, b) => a.order_index - b.order_index
+        )
+      );
+
+      setSuccess("Lesson added successfully.");
+    }
+
+    setShowLessonForm(false);
+    setEditingLessonId(null);
+    setLessonForm(emptyLesson);
+    setLessonPdf(null);
+
+  } catch (err) {
+    console.error("Save lesson error:", err);
+
+    // Clean up a newly uploaded file if saving the lesson failed.
+    if (uploadedPdfPath) {
+      await supabase.storage
+        .from("lesson-pdfs")
+        .remove([uploadedPdfPath]);
+    }
+
+    setError(err.message || "Could not save this lesson.");
+  } finally {
+    setSavingLesson(false);
   }
+}
+
 
   async function deleteLesson(lesson) {
     const confirmed = window.confirm(
@@ -558,113 +630,20 @@ export default function CourseEditorPage() {
           </div>
 
           {showLessonForm && (
-            <form
-              onSubmit={saveLesson}
-              className="mt-6 space-y-5 rounded-2xl border border-[#fe5933]/20 bg-[#fffaf8] p-5"
-            >
-              <div className="flex items-center justify-between gap-3">
-                <h3 className="font-bold">
-                  {editingLessonId ? "Edit lesson" : "New lesson"}
-                </h3>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowLessonForm(false);
-                    setEditingLessonId(null);
-                    setLessonForm(emptyLesson);
-                  }}
-                  aria-label="Close lesson form"
-                  className="rounded-lg p-2 text-slate-500 hover:bg-white"
-                >
-                  <X size={18} />
-                </button>
-              </div>
+            <Lessoncreate
+                saveLesson={saveLesson}
+                editingLessonId={editingLessonId}
+                setEditingLessonId={setEditingLessonId}
+                lessonForm={lessonForm}
+                setLessonForm={setLessonForm}
+                emptyLesson={emptyLesson}
+                inputClass={inputClass}
+                savingLesson={savingLesson}
+                setShowLessonForm={setShowLessonForm}
+                lessonPdf={lessonPdf}
+                setLessonPdf={setLessonPdf}
+              />
 
-              <div>
-                <label htmlFor="lesson-title" className="text-sm font-semibold">
-                  Lesson title *
-                </label>
-                <input
-                  id="lesson-title"
-                  required
-                  maxLength={200}
-                  value={lessonForm.title}
-                  onChange={(event) =>
-                    setLessonForm({
-                      ...lessonForm,
-                      title: event.target.value,
-                    })
-                  }
-                  className={inputClass}
-                  placeholder="e.g. Introduction to algebra"
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="lesson-description"
-                  className="text-sm font-semibold"
-                >
-                  Short description
-                </label>
-                <textarea
-                  id="lesson-description"
-                  rows={2}
-                  value={lessonForm.description}
-                  onChange={(event) =>
-                    setLessonForm({
-                      ...lessonForm,
-                      description: event.target.value,
-                    })
-                  }
-                  className={`${inputClass} resize-y`}
-                  placeholder="Briefly describe this lesson"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="lesson-content" className="text-sm font-semibold">
-                  Lesson content
-                </label>
-                <textarea
-                  id="lesson-content"
-                  rows={8}
-                  value={lessonForm.content}
-                  onChange={(event) =>
-                    setLessonForm({
-                      ...lessonForm,
-                      content: event.target.value,
-                    })
-                  }
-                  className={`${inputClass} resize-y`}
-                  placeholder="Write the lesson text, explanations, examples, and exercises..."
-                />
-                
-              </div>
-
-              <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-                <button
-                  type="button"
-                  onClick={() => setShowLessonForm(false)}
-                  className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold hover:bg-slate-50"
-                >
-                  Cancel
-                </button>
-
-                <button
-                  type="submit"
-                  disabled={savingLesson}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#fe5933] px-5 py-3 text-sm font-semibold text-white hover:bg-[#e94b27] disabled:opacity-60"
-                >
-                  {savingLesson ? (
-                    <LoaderCircle size={17} className="animate-spin" />
-                  ) : (
-                    <Save size={17} />
-                  )}
-                  {editingLessonId ? "Update lesson" : "Save lesson"}
-                </button>
-              </div>
-            </form>
           )}
 
           <div className="mt-6 space-y-3">

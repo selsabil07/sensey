@@ -5,11 +5,13 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import {
   ArrowLeft,
+  Badge,
   BookOpen,
   CalendarDays,
   Check,
   CheckCircle2,
   ChevronRight,
+  ClipboardListIcon,
   Gauge,
   Globe,
   LoaderCircle,
@@ -19,6 +21,7 @@ import {
   Tag,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { LessonPdfButton } from "@/components/teacher/LessonPdfButton";
 
 // Deterministic cover for courses without a thumbnail.
 function coverStyle(seed = "") {
@@ -72,6 +75,12 @@ export default function CourseDetailsPage() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [copied, setCopied] = useState(false);
+
+  const [lessons, setLessons] = useState([]);
+  const [quizzes, setQuizzes] = useState([]);
+  const [quizPdfs, setQuizPdfs] = useState([]);
+  const [contentLoading, setContentLoading] = useState(false);
+  const [contentError, setContentError] = useState("");
 
   // Stable client: creating it on every render re-triggered the load effect in a loop.
   const supabase = useMemo(() => createClient(), []);
@@ -161,6 +170,72 @@ export default function CourseDetailsPage() {
       setLoading(false);
     }
   }, [courseId, supabase]);
+
+  const loadCourseContent = useCallback(async () => {
+  if (!user || userRole !== "student" || !isEnrolled || !course) {
+    setLessons([]);
+    setQuizzes([]);
+    setQuizPdfs([]);
+    return;
+  }
+
+  setContentLoading(true);
+  setContentError("");
+
+  try {
+    // 1. Load lessons
+    const { data: lessonData, error: lessonError } = await supabase
+      .from("lessons")
+      .select("*")
+      .eq("course_id", course.id)
+      .order("order_index", { ascending: true });
+
+    if (lessonError) throw lessonError;
+
+    const loadedLessons = lessonData ?? [];
+    setLessons(loadedLessons);
+
+    const lessonIds = loadedLessons.map((lesson) => lesson.id);
+
+    if (lessonIds.length === 0) {
+      setQuizzes([]);
+      setQuizPdfs([]);
+      return;
+    }
+
+    // 2. Load quizzes belonging to these lessons
+    const { data: quizData, error: quizError } = await supabase
+      .from("quizzes")
+      .select("*")
+      .in("lesson_id", lessonIds)
+      .order("created_at", { ascending: true });
+
+    if (quizError) throw quizError;
+
+    setQuizzes(quizData ?? []);
+
+    // 3. Load PDF quizzes belonging to this course
+    const { data: pdfData, error: pdfError } = await supabase
+      .from("quiz_pdfs")
+      .select("*")
+      .eq("course_id", course.id)
+      .order("created_at", { ascending: true });
+
+    if (pdfError) throw pdfError;
+
+    setQuizPdfs(pdfData ?? []);
+  } catch (err) {
+    console.error("Failed to load course content:", err);
+    setContentError("Couldn't load the course lessons and quizzes.");
+  } finally {
+    setContentLoading(false);
+  }
+}, [user, userRole, isEnrolled, course, supabase]);
+
+useEffect(() => {
+  loadCourseContent();
+}, [loadCourseContent]);
+
 
   useEffect(() => {
     if (courseId) loadCourse();
@@ -406,6 +481,136 @@ export default function CourseDetailsPage() {
               {course.description || "The teacher hasn't added a course description yet."}
             </p>
           </section>
+          {/* Course Lessons and Quizzes */}
+          {user && userRole === "student" && isEnrolled && (
+            <section className="space-y-8">
+
+              <div>
+                <h2 className="text-2xl font-bold text-[#0b1b33]">
+                  Course Lessons
+                </h2>
+                <p className="mt-2 text-sm text-slate-500">
+                  Access your course learning materials.
+                </p>
+              </div>
+
+              {contentLoading ? (
+                <div className="flex items-center gap-2 text-slate-500">
+                  <LoaderCircle className="animate-spin" size={18} />
+                  Loading course content...
+                </div>
+              ) : contentError ? (
+                <p className="rounded-xl bg-red-50 p-4 text-sm text-red-600">
+                  {contentError}
+                </p>
+              ) : lessons.length === 0 ? (
+                <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center">
+                  <BookOpen className="mx-auto mb-3 text-slate-400" size={30} />
+                  <p className="font-semibold text-[#0b1b33]">
+                    No lessons available yet
+                  </p>
+                  <p className="mt-1 text-sm text-slate-500">
+                    Your teacher hasn't added any lessons.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  
+                {lessons.map((lesson, index) => (
+                  <div
+                    key={lesson.id}
+                    className="rounded-2xl border border-slate-200 bg-white p-5"
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#0b1b33] text-white">
+                        {index + 1}
+                      </div>
+
+                      <div className="min-w-0 flex-1">
+                        <h3 className="font-bold text-[#0b1b33]">
+                          {lesson.title}
+                        </h3>
+
+                        {lesson.description && (
+                          <p className="mt-2 text-sm text-slate-500">
+                            {lesson.description}
+                          </p>
+                        )}
+
+                        {lesson.content && (
+                          <p className="mt-3 whitespace-pre-line text-sm leading-7 text-slate-600">
+                            {lesson.content}
+                          </p>
+                        )}
+
+                        {lesson.pdf_path ? (
+                          <LessonPdfButton
+                            supabase={supabase}
+                            pdfPath={lesson.pdf_path}
+                            lessonTitle={lesson.title}
+                          />
+                        ) : (
+                          <p className="mt-4 text-xs text-slate-400">
+                            No PDF attached to this lesson.
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                </div>
+              )}
+
+              {/* Regular quizzes */}
+              <div>
+                <h2 className="text-2xl font-bold text-[#0b1b33]">
+                  Course Quizzes
+                </h2>
+
+                <div className="mt-4 space-y-3">
+                  {quizzes.length === 0 && quizPdfs.length === 0 ? (
+                    <p className="rounded-xl border border-slate-200 bg-white p-5 text-sm text-slate-500">
+                      No quizzes available yet.
+                    </p>
+                  ) : (
+                    <>
+                      {quizzes.map((quiz) => (
+                        <div
+                          key={quiz.id}
+                          className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4"
+                        >
+                          <ClipboardListIcon />
+
+                          <div className="min-w-0 flex-1">
+                            <p className="font-semibold text-[#0b1b33]">
+                              {quiz.title}
+                            </p>
+                            <p className="text-xs text-slate-500">
+                              {lessons.find(
+                                (lesson) => lesson.id === quiz.lesson_id
+                              )?.title || "Course quiz"}
+                            </p>
+                          </div>
+
+                          <Badge color="info">Quiz</Badge>
+                        </div>
+                      ))}
+
+                      {/* PDF quizzes */}
+                      {quizPdfs.map((pdf) => (
+                        <QuizPdfButton
+                          key={pdf.id}
+                          supabase={supabase}
+                          pdf={pdf}
+                        />
+                      ))}
+                    </>
+                  )}
+                </div>
+              </div>
+            </section>
+          )}
 
           {related.length > 0 && (
             <section>

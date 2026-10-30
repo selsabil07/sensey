@@ -17,6 +17,7 @@ import { createClient } from "@/lib/supabase/client";
 import SummaryCard from "@/components/student/SummaryCard";
 import CourseCard from "@/components/student/CourseCard";
 import EmptyState from "@/components/student/EmptyState";
+import Link from "next/link";
 
 const COLORS = {
   navy: "#0b1b33",
@@ -43,15 +44,7 @@ function getInitials(name = "Course") {
     .toUpperCase();
 }
 
-function formatDate(date) {
-  if (!date) return "Recently added";
 
-  return new Date(date).toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-}
 
 
 export default function StudentCoursesPage() {
@@ -239,11 +232,10 @@ export default function StudentCoursesPage() {
               disabled={loading || refreshing}
               className="inline-flex items-center justify-center gap-2 self-start rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 sm:self-auto"
             >
-              <RefreshCw
-                size={16}
-                className={refreshing ? "animate-spin" : ""}
-              />
-              Refresh
+              <Link href={'/courses'}>
+              view all the courses
+              </Link>
+              
             </button>
           </section>
 
@@ -400,6 +392,7 @@ export default function StudentCoursesPage() {
                       key={course.enrollment_id}
                       course={course}
                       index={index}
+                      COLORS={COLORS}
                     />
                   ))}
                 </div>

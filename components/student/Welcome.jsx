@@ -10,7 +10,7 @@ function getGreeting() {
 }
 
 
-const Welcome = ({loading, latestCourse, firstName, courses}) => {
+const Welcome = ({loading, latestCourse, firstName, courses, completedLessons}) => {
   return (
     <div>
         <section className="relative overflow-hidden rounded-3xl bg-[#0b1b33] px-4 py-5 text-white sm:px-9 sm:py-10">

@@ -600,10 +600,6 @@ export default function TeacherQuizzesPage() {
             </div>
 
             <div className="flex flex-col gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-xs leading-5 text-slate-500">
-                Your file is stored in a private bucket. It is not made public.
-              </p>
-
               <button
                 type="submit"
                 disabled={uploading || loading || courses.length === 0}
