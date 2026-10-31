@@ -50,7 +50,7 @@ const Welcome = ({loading, latestCourse, firstName, courses, completedLessons}) 
           <div className="mt-6 flex flex-wrap gap-3">
             {latestCourse ? (
               <Link
-                href={`/student/courses/${latestCourse.id}`}
+                href={`/courses/${latestCourse.id}`}
                 className="inline-flex items-center gap-2 rounded-xl bg-[#fe5933] px-5 py-3 text-sm font-semibold text-white outline-none transition hover:bg-[#ec4a25] focus-visible:ring-2 focus-visible:ring-white/70"
               >
                 <Play size={16} />

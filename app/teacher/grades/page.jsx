@@ -385,38 +385,6 @@ export default function TeacherGradesPage() {
     });
   }, [progressRows, search, courseFilter]);
 
-  const filteredGrades = useMemo(() => {
-    const query = search.trim().toLowerCase();
-
-    return gradeRows.filter((row) => {
-      const matchesSearch =
-        !query ||
-        row.studentName.toLowerCase().includes(query) ||
-        row.email.toLowerCase().includes(query) ||
-        row.quizTitle.toLowerCase().includes(query) ||
-        row.courseTitle.toLowerCase().includes(query);
-
-      const matchesCourse =
-        courseFilter === "all" || row.courseId === courseFilter;
-
-      return matchesSearch && matchesCourse;
-    });
-  }, [gradeRows, search, courseFilter]);
-
-  const averageScore = useMemo(() => {
-    const scored = gradeRows.filter(
-      (row) => row.completedAt && row.score !== null &&
-        Number.isFinite(row.score)
-    );
-
-    if (scored.length === 0) return null;
-
-    return (
-      scored.reduce((sum, row) => sum + row.score, 0) /
-      scored.length
-    );
-  }, [gradeRows]);
-
   const averageProgress = useMemo(() => {
     if (progressRows.length === 0) return null;
 
@@ -492,7 +460,7 @@ export default function TeacherGradesPage() {
       )}
 
       {/* Summary cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <StatCard
           title="Enrolled students"
           value={students.length}
@@ -511,18 +479,6 @@ export default function TeacherGradesPage() {
           description="Across student-course enrollments"
           icon={TrendingUp}
           color={COLORS.teal}
-        />
-
-        <StatCard
-          title="Average quiz score"
-          value={
-            averageScore === null
-              ? "—"
-              : percent(averageScore)
-          }
-          description="Completed attempts with recorded scores"
-          icon={Award}
-          color={COLORS.purple}
         />
 
         <StatCard
@@ -563,37 +519,6 @@ export default function TeacherGradesPage() {
             ))}
           </select>
         </div>
-
-        <div className="mt-5 flex gap-2 border-b border-slate-100">
-          <button
-            onClick={() => setTab("progress")}
-            className={`border-b-2 px-4 py-3 text-sm font-semibold transition ${
-              tab === "progress"
-                ? "border-[#fe5933] text-[#0b1b33]"
-                : "border-transparent text-slate-500 hover:text-slate-800"
-            }`}
-          >
-            Learning progress
-            <span className="ml-2 rounded-full bg-slate-100 px-2 py-0.5 text-xs">
-              {filteredProgress.length}
-            </span>
-          </button>
-
-          <button
-            onClick={() => setTab("grades")}
-            className={`border-b-2 px-4 py-3 text-sm font-semibold transition ${
-              tab === "grades"
-                ? "border-[#fe5933] text-[#0b1b33]"
-                : "border-transparent text-slate-500 hover:text-slate-800"
-            }`}
-          >
-            Quiz grades
-            <span className="ml-2 rounded-full bg-slate-100 px-2 py-0.5 text-xs">
-              {filteredGrades.length}
-            </span>
-          </button>
-        </div>
-
         {/* Progress table */}
         {tab === "progress" && (
           <div className="mt-4 overflow-x-auto">

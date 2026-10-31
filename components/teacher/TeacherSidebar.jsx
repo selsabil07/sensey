@@ -37,11 +37,11 @@ const navigation = [
     href: "/teacher/quizzes",
     icon: ClipboardCheck,
   },
-  {
-    label: "Grades & Progress",
-    href: "/teacher/grades",
-    icon: ChartNoAxesCombined,
-  },
+  // {
+  //   label: "Grades & Progress",
+  //   href: "/teacher/grades",
+  //   icon: ChartNoAxesCombined,
+  // },
   // {
   //   label: "AI Assistant",
   //   href: "/teacher/ai-assistant",

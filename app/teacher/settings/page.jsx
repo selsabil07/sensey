@@ -283,7 +283,6 @@ export default function TeacherSettingsPage() {
   const tabs = [
     { id: "profile", label: "Profile", icon: UserRound },
     { id: "security", label: "Security", icon: ShieldCheck },
-    { id: "preferences", label: "Preferences", icon: Bell },
   ];
 
   if (loading) {
@@ -305,7 +304,7 @@ export default function TeacherSettingsPage() {
           Settings
         </h1>
         <p className="mt-2 text-sm text-slate-500">
-          Manage your profile, account security, and preferences.
+          Manage your profile and your account security.
         </p>
       </div>
 
@@ -327,34 +326,8 @@ export default function TeacherSettingsPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[240px_minmax(0,1fr)]">
-        {/* Settings navigation */}
-        <aside className="rounded-2xl border border-slate-200 bg-white p-3">
-          <p className="px-3 py-3 text-xs font-bold uppercase tracking-wider text-slate-400">
-            Account settings
-          </p>
+      <div className="grid grid-cols-1 items-start gap-6 ">
 
-          <nav className="space-y-1">
-            {tabs.map(({ id, label, icon: Icon }) => (
-              <button
-                key={id}
-                onClick={() => {
-                  setActiveTab(id);
-                  setError("");
-                  setSuccess("");
-                }}
-                className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-semibold transition ${
-                  activeTab === id
-                    ? "bg-[#0b1b33] text-white"
-                    : "text-slate-600 hover:bg-slate-50"
-                }`}
-              >
-                <Icon size={18} />
-                {label}
-              </button>
-            ))}
-          </nav>
-        </aside>
 
         <div className="min-w-0 space-y-6">
           {/* PROFILE */}
@@ -521,12 +494,6 @@ export default function TeacherSettingsPage() {
                   </button>
                 </div>
               </section>
-            </form>
-          )}
-
-          {/* SECURITY */}
-          {activeTab === "security" && (
-            <>
               <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-7">
                 <div className="flex items-start gap-4">
                   <div className="rounded-xl bg-blue-50 p-3 text-blue-600">
@@ -568,103 +535,15 @@ export default function TeacherSettingsPage() {
                     ? "Requesting..."
                     : "Send password-reset email"}
                 </button>
-              </section>
-
-              <section className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-7">
-                <h2 className="font-bold text-slate-900">
-                  Account information
-                </h2>
-                <p className="mt-2 text-sm text-slate-500">
-                  Your teacher identity is managed through Sensey's
-                  authentication system.
-                </p>
-                <div className="mt-5 flex items-center justify-between gap-3 border-t border-slate-100 pt-4">
-                  <span className="text-sm text-slate-600">Account role</span>
-                  <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
-                    Teacher
-                  </span>
-                </div>
-              </section>
-            </>
+              </section>    
+            </form>
           )}
 
-          {/* PREFERENCES */}
-          {activeTab === "preferences" && (
-            <form
-              onSubmit={savePreferences}
-              className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-7"
-            >
-              <h2 className="text-lg font-bold text-slate-900">
-                Notification preferences
-              </h2>
-              <p className="mt-1 text-sm text-slate-500">
-                Choose your preferred notification options.
-              </p>
-
-              <div className="mt-6 divide-y divide-slate-100">
-                <label className="flex cursor-pointer items-start justify-between gap-4 py-5">
-                  <div>
-                    <p className="text-sm font-semibold text-slate-800">
-                      Email notifications
-                    </p>
-                    <p className="mt-1 text-sm text-slate-500">
-                      Preference for receiving account and platform updates by email.
-                    </p>
-                  </div>
-
-                  <input
-                    type="checkbox"
-                    checked={preferences.emailNotifications}
-                    onChange={(event) =>
-                      setPreferences((previous) => ({
-                        ...previous,
-                        emailNotifications: event.target.checked,
-                      }))
-                    }
-                    className="mt-1 h-5 w-5 accent-[#fe5933]"
-                  />
-                </label>
-
-                <label className="flex cursor-pointer items-start justify-between gap-4 py-5">
-                  <div>
-                    <p className="text-sm font-semibold text-slate-800">
-                      Course updates
-                    </p>
-                    <p className="mt-1 text-sm text-slate-500">
-                      Preference for updates related to your courses and students.
-                    </p>
-                  </div>
-
-                  <input
-                    type="checkbox"
-                    checked={preferences.courseUpdates}
-                    onChange={(event) =>
-                      setPreferences((previous) => ({
-                        ...previous,
-                        courseUpdates: event.target.checked,
-                      }))
-                    }
-                    className="mt-1 h-5 w-5 accent-[#fe5933]"
-                  />
-                </label>
-              </div>
-
-              <p className="mt-3 rounded-xl bg-amber-50 p-3 text-xs leading-5 text-amber-800">
-                These preferences are saved in this browser only. They do not
-                enable or disable actual email delivery yet.
-              </p>
-
-              <div className="mt-6 flex justify-end border-t border-slate-100 pt-5">
-                <button
-                  type="submit"
-                  className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90"
-                  style={{ backgroundColor: ORANGE }}
-                >
-                  <Save size={17} />
-                  Save preferences
-                </button>
-              </div>
-            </form>
+          {/* SECURITY */}
+          {activeTab === "security" && (
+            <>
+                       
+            </>
           )}
         </div>
       </div>
