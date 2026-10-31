@@ -187,10 +187,6 @@ export default function StudentDashboardPage() {
 
       {/* Learning statistics */}
       <section aria-labelledby="stats-heading">
-        <h2 id="stats-heading" className="sr-only">
-          Your learning at a glance
-        </h2>
-
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <StatCard
             title="Enrolled courses"

@@ -29,7 +29,6 @@ const EnrolledCourses = ({search, filteredCourses, loading, error}) => {
     });
   }
   
-
   return (
     <div>
       <section aria-labelledby="courses-heading">
@@ -164,7 +163,7 @@ const EnrolledCourses = ({search, filteredCourses, loading, error}) => {
 
                     <div className="mt-auto pt-5">
                       <Link
-                        href={`/student/courses/${course.id}`}
+                        href={`/courses/${course.id}`}
                         className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#0b1b33] px-4 py-3 text-sm font-semibold text-white outline-none transition hover:bg-[#fe5933] focus-visible:ring-2 focus-visible:ring-[#fe5933]/70 focus-visible:ring-offset-2"
                       >
                         <Play size={16} />

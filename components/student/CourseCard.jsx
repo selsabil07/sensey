@@ -79,7 +79,7 @@ export default function CourseCard({ course, index, COLORS }) {
           </span>
         </div>
 
-        <Link href={`/student/courses/${course.id}`}>
+        <Link href={`/courses/${course.id}`}>
           <h2 className="line-clamp-2 text-lg font-bold leading-snug text-slate-900 transition group-hover:text-[#4776e6]">
             {course.title || "Untitled course"}
           </h2>

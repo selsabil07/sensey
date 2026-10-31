@@ -21,7 +21,9 @@ import {
   Tag,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import { LessonPdfButton } from "@/components/teacher/LessonPdfButton";
+import { LessonPdfButton, QuizPdfButton } from "@/components/teacher/LessonPdfButton";
+import Navbar from "@/components/public/Navbar";
+import Footer from "@/components/public/Footer";
 
 // Deterministic cover for courses without a thumbnail.
 function coverStyle(seed = "") {
@@ -335,76 +337,12 @@ useEffect(() => {
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-800">
-      {/* Top bar */}
-      <header className="absolute inset-x-0 top-0 z-20">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5">
-          <Link href="/" className="text-xl font-extrabold tracking-tight text-white">
-            Sensey<span className="text-[#fe5933]">.</span>
-          </Link>
-          <button
-            onClick={handleShare}
-            className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white backdrop-blur transition hover:bg-white/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
-          >
-            {copied ? <Check size={16} /> : <Share2 size={16} />}
-            {copied ? "Link copied" : "Share"}
-          </button>
-        </div>
-      </header>
-
-      {/* Hero */}
-      <section className="relative overflow-hidden bg-[#0b1b33] text-white">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -right-32 -top-32 h-[28rem] w-[28rem] rounded-full bg-[#fe5933]/25 blur-3xl"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.07]"
-          style={{
-            backgroundImage:
-              "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
-            backgroundSize: "44px 44px",
-          }}
-        />
-        <div className="relative mx-auto max-w-6xl px-5 pb-16 pt-28 lg:pb-44 lg:pr-[420px]">
-          <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-1.5 text-sm text-slate-400">
-            <Link href="/courses" className="inline-flex items-center gap-1.5 hover:text-white">
-              <ArrowLeft size={15} /> Courses
-            </Link>
-            {course.subject && (
-              <>
-                <ChevronRight size={14} />
-                <span>{course.subject}</span>
-              </>
-            )}
-          </nav>
-
-          <div className="mb-5 flex flex-wrap gap-2">
-            {course.level && (
-              <span className="rounded-full bg-[#fe5933] px-3 py-1 text-xs font-semibold text-white">
-                {course.level}
-              </span>
-            )}
-            {course.subject && (
-              <span className="rounded-full border border-white/20 px-3 py-1 text-xs font-semibold text-slate-200">
-                {course.subject}
-              </span>
-            )}
-          </div>
-
-          <h1 className="max-w-3xl text-4xl font-extrabold leading-[1.1] tracking-tight sm:text-5xl">
-            {course.title}
-          </h1>
-          <p className="mt-5 max-w-2xl line-clamp-3 text-lg leading-8 text-slate-300">
-            {course.description || "Explore this course and start learning with Sensey."}
-          </p>
-        </div>
-      </section>
+      <Navbar />
 
       {/* Body */}
       <div className="mx-auto grid max-w-6xl gap-8 px-5 pb-20 lg:grid-cols-[1fr_380px]">
         {/* Enrollment card (overlaps hero on desktop) */}
-        <aside className="order-first -mt-10 h-fit lg:order-last lg:-mt-36 lg:sticky lg:top-6">
+        <aside className="order-first -mt-10 h-fit lg:order-last lg:mt-30 lg:sticky lg:top-6">
           <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-900/10">
             <Cover course={course} className="aspect-video w-full" />
 
@@ -637,6 +575,7 @@ useEffect(() => {
           )}
         </div>
       </div>
+      <Footer />
     </main>
   );
 }
