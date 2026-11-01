@@ -44,7 +44,7 @@ export default function Hero() {
             Learn anything from{" "}
             <span className="relative whitespace-nowrap">
               <span aria-hidden className="absolute inset-x-[-4px] bottom-1 top-[55%] -z-0 -skew-x-6 rounded bg-[#fe5933]/30" />
-              <span className="relative">you teachers</span>
+              <span className="relative">your teachers</span>
             </span>{" "}
             at anytime 
               </h1>
