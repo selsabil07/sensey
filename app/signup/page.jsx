@@ -258,13 +258,13 @@ export default function SignupPage() {
                 disabled={loading}
                 className="mt-1 h-4 w-4 shrink-0 accent-[#fe5933]"
               />
-              <label htmlFor="terms" className="text-xs leading-5 text-slate-500">
+              {/* <label htmlFor="terms" className="text-xs leading-5 text-slate-500">
                 I agree to the{" "}
                 <Link href="/terms" className="font-medium text-[#4776e6] hover:underline">
                   Terms &amp; Conditions
                 </Link>{" "}
                 and privacy policy.
-              </label>
+              </label> */}
             </div>
 
             {error && (

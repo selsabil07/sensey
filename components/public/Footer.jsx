@@ -29,11 +29,11 @@ const footerLinks = {
     { label: "Sign In", href: "/sign-in" },
     { label: "Get Started", href: "/sign-up" },
   ],
-  Resources: [
-    { label: "Help Center", href: "/help" },
-    { label: "Privacy Policy", href: "/privacy" },
-    { label: "Terms of Service", href: "/terms" },
-  ],
+  // Resources: [
+  //   { label: "Help Center", href: "/help" },
+  //   { label: "Privacy Policy", href: "/privacy" },
+  //   { label: "Terms of Service", href: "/terms" },
+  // ],
 };
 
 export default function Footer() {
@@ -106,7 +106,7 @@ export default function Footer() {
           </div>
 
           {/* Navigation columns */}
-          <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-2">
             {Object.entries(footerLinks).map(([title, links]) => (
               <div key={title}>
                 <h3 className="text-sm font-semibold text-white">{title}</h3>

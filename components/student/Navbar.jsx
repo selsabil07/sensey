@@ -92,9 +92,6 @@ export default function StudentNavbar({ onMenuClick = () => {} }) {
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [openMenu, setOpenMenu] = useState(null); // "notifications" | "profile" | null
 
-  // Placeholder until a notifications table or service is connected.
-  const [notifications] = useState([]);
-
   const actionsRef = useRef(null);
   const mobileSearchRef = useRef(null);
 
@@ -191,10 +188,7 @@ export default function StudentNavbar({ onMenuClick = () => {} }) {
     setMobileSearchOpen(false);
   }
 
-  const notificationsOpen = openMenu === "notifications";
   const profileOpen = openMenu === "profile";
-  const hasNotifications = notifications.length > 0;
-
   return (
     <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
       <div className="flex h-[72px] items-center gap-3 px-4 sm:px-6 lg:px-8">
@@ -255,79 +249,6 @@ export default function StudentNavbar({ onMenuClick = () => {} }) {
             {mobileSearchOpen ? <X size={20} /> : <Search size={20} />}
           </button>
 
-          {/* Notifications */}
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => toggleMenu("notifications")}
-              aria-label={
-                hasNotifications
-                  ? `Notifications, ${notifications.length} unread`
-                  : "Notifications"
-              }
-              aria-expanded={notificationsOpen}
-              aria-haspopup="true"
-              className={`relative flex h-10 w-10 items-center justify-center rounded-xl border outline-none transition focus-visible:ring-2 focus-visible:ring-[#4776e6]/60 ${
-                notificationsOpen
-                  ? "border-[#4776e6]/30 bg-[#4776e6]/10 text-[#4776e6]"
-                  : "border-slate-200 text-slate-600 hover:bg-slate-50"
-              }`}
-            >
-              <Bell size={19} />
-              {hasNotifications && (
-                <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full border-2 border-white bg-[#fe5933]" />
-              )}
-            </button>
-
-            {notificationsOpen && (
-              <div className="fixed inset-x-4 top-[80px] z-50 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl sm:absolute sm:inset-x-auto sm:right-0 sm:top-12 sm:w-80">
-                <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
-                  <h2 className="text-sm font-bold text-[#0b1b33]">
-                    Notifications
-                  </h2>
-                  <button
-                    type="button"
-                    aria-label="Close notifications"
-                    onClick={() => setOpenMenu(null)}
-                    className="rounded-lg p-1.5 text-slate-400 outline-none transition hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-[#4776e6]/60"
-                  >
-                    <X size={16} />
-                  </button>
-                </div>
-
-                {!hasNotifications ? (
-                  <div className="px-5 py-9 text-center">
-                    <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-slate-100 text-slate-400">
-                      <Bell size={21} />
-                    </div>
-                    <p className="mt-3 text-sm font-semibold text-slate-700">
-                      You're all caught up
-                    </p>
-                    <p className="mt-1 text-xs leading-5 text-slate-500">
-                      New lessons, quiz results and announcements will show up
-                      here.
-                    </p>
-                  </div>
-                ) : (
-                  <ul className="max-h-72 overflow-y-auto">
-                    {notifications.map((notification) => (
-                      <li
-                        key={notification.id}
-                        className="border-b border-slate-100 px-4 py-3 last:border-0"
-                      >
-                        <p className="text-sm font-medium text-[#0b1b33]">
-                          {notification.title}
-                        </p>
-                        <p className="mt-1 text-xs text-slate-500">
-                          {notification.message}
-                        </p>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            )}
-          </div>
 
           {/* Profile menu */}
           <div className="relative">

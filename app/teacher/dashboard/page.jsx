@@ -30,6 +30,7 @@ export default function TeacherDashboard() {
   const [studentCount, setStudentCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [quizCount, setQuizCount] = useState(0);
 
   useEffect(() => {
     async function loadDashboard() {
@@ -65,6 +66,15 @@ export default function TeacherDashboard() {
           ...profile,
           email: user.email,
         });
+
+        const { count, error: quizError } = await supabase
+          .from("quiz_pdfs")
+          .select("id", { count: "exact", head: true })
+          .eq("teacher_id", user.id);
+
+        if (quizError) throw quizError;
+
+        setQuizCount(count || 0);
 
         const { data: courseData, error: courseError } = await supabase
           .from("courses")
@@ -120,19 +130,11 @@ export default function TeacherDashboard() {
     },
     {
       title: "Quizzes",
-      value: "—",
+      value: quizCount,
       icon: ClipboardCheck,
       color: "#fe5933",
       bg: "#fff0e9",
       href: "/teacher/quizzes",
-    },
-    {
-      title: "Student Progress",
-      value: "—",
-      icon: ChartNoAxesCombined,
-      color: "#9274e8",
-      bg: "#f1edff",
-      href: "/teacher/grades",
     },
   ];
 
@@ -179,7 +181,7 @@ export default function TeacherDashboard() {
         )}
 
         {/* Statistics */}
-        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {stats.map((stat) => {
             const Icon = stat.icon;
 
@@ -203,13 +205,16 @@ export default function TeacherDashboard() {
                   />
                 </div>
 
-                <p className="mt-5 text-sm font-medium text-slate-500">
+                <div className="flex justify-between">
+                  <p className="mt-5 text-sm font-medium text-slate-500">
                   {stat.title}
                 </p>
 
                 <p className="mt-1 text-3xl font-bold text-[#0b1b33]">
                   {stat.value}
                 </p>
+                </div>
+                
               </Link>
             );
           })}

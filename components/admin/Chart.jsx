@@ -1,32 +1,33 @@
+
 'use client'
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
-const COLORS = {
-  students: '#fe5933',
-  lessons: '#4776e6',
-}
+const BAR_COLOR = '#fe5933'
 
 function getBuckets(period) {
   const now = new Date()
   const buckets = []
 
   if (period === 'This week') {
-    const today = new Date(now)
-    const mondayOffset = (today.getDay() + 6) % 7
-    today.setDate(today.getDate() - mondayOffset)
-    today.setHours(0, 0, 0, 0)
+    const monday = new Date(now)
+    const offset = (monday.getDay() + 6) % 7
+
+    monday.setDate(monday.getDate() - offset)
+    monday.setHours(0, 0, 0, 0)
 
     for (let i = 0; i < 7; i++) {
-      const start = new Date(today)
-      start.setDate(today.getDate() + i)
+      const start = new Date(monday)
+      start.setDate(monday.getDate() + i)
 
       const end = new Date(start)
       end.setDate(end.getDate() + 1)
 
       buckets.push({
-        label: start.toLocaleDateString('en', { weekday: 'short' }),
+        label: start.toLocaleDateString('en-US', {
+          weekday: 'short',
+        }),
         start,
         end,
       })
@@ -59,7 +60,7 @@ function getBuckets(period) {
       const end = new Date(now.getFullYear(), i + 1, 1)
 
       buckets.push({
-        label: start.toLocaleDateString('en', {
+        label: start.toLocaleDateString('en-US', {
           month: 'short',
         }),
         start,
@@ -73,14 +74,14 @@ function getBuckets(period) {
 
 export default function Chart() {
   const [period, setPeriod] = useState('This week')
-  const [activity, setActivity] = useState([])
+  const [enrollments, setEnrollments] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
   useEffect(() => {
     let cancelled = false
 
-    async function fetchActivity() {
+    async function fetchEnrollments() {
       setLoading(true)
       setError('')
 
@@ -90,113 +91,77 @@ export default function Chart() {
         const lastBucket = buckets[buckets.length - 1]
 
         if (!firstBucket || !lastBucket) {
-          throw new Error('Could not determine the selected date range.')
+          throw new Error('Invalid date range.')
         }
 
         const supabase = createClient()
 
-        // Assumes progress contains student_id, completed and updated_at.
         const { data, error: queryError } = await supabase
-          .from('progress')
-          .select('student_id, completed, updated_at')
-          .gte('updated_at', firstBucket.start.toISOString())
-          .lt('updated_at', lastBucket.end.toISOString())
+          .from('enrollments')
+          .select('id, enrolled_at')
+          .gte('enrolled_at', firstBucket.start.toISOString())
+          .lt('enrolled_at', lastBucket.end.toISOString())
+          .order('enrolled_at', { ascending: true })
 
         if (queryError) throw queryError
 
         const results = buckets.map((bucket) => {
-          const rows = (data ?? []).filter((row) => {
-            const date = new Date(row.updated_at)
+          const count = (data || []).filter((enrollment) => {
+            const date = new Date(enrollment.enrolled_at)
+
             return date >= bucket.start && date < bucket.end
-          })
-
-          const activeStudents = new Set(
-            rows
-              .map((row) => row.student_id)
-              .filter(Boolean)
-          )
-
-          const completedLessons = rows.filter(
-            (row) => row.completed === true
-          ).length
+          }).length
 
           return {
-            day: bucket.label,
-            students: activeStudents.size,
-            lessons: completedLessons,
+            label: bucket.label,
+            count,
           }
         })
 
-        if (!cancelled) setActivity(results)
+        if (!cancelled) setEnrollments(results)
       } catch (err) {
-        console.error('Failed to load learning activity:', err)
+        console.error('Failed to load enrollments:', err)
 
         if (!cancelled) {
           setError(
-            err.message || 'Could not load learning activity.'
+            err.message || 'Could not load enrollments.'
           )
-          setActivity([])
+          setEnrollments([])
         }
       } finally {
         if (!cancelled) setLoading(false)
       }
     }
 
-    fetchActivity()
+    fetchEnrollments()
 
     return () => {
       cancelled = true
     }
   }, [period])
 
-  const width = 600
-  const height = 230
-  const left = 42
-  const right = 12
-  const top = 16
-  const bottom = 30
-
-  const maxDataValue = Math.max(
-    0,
-    ...activity.map((item) =>
-      Math.max(item.students, item.lessons)
-    )
+  const total = enrollments.reduce(
+    (sum, item) => sum + item.count,
+    0
   )
 
-  const maxValue = Math.max(5, Math.ceil(maxDataValue / 5) * 5)
-  const tickStep = maxValue <= 20 ? 5 : Math.ceil(maxValue / 4)
-
-  const getX = (index) =>
-    activity.length <= 1
-      ? width / 2
-      : left +
-        (index * (width - left - right)) /
-          (activity.length - 1)
-
-  const getY = (value) =>
-    height -
-    bottom -
-    (value / maxValue) * (height - top - bottom)
-
-  const makePoints = (key) =>
-    activity
-      .map((item, index) => `${getX(index)},${getY(item[key])}`)
-      .join(' ')
-
-  const ticks = Array.from(
-    { length: Math.ceil(maxValue / tickStep) + 1 },
-    (_, index) => index * tickStep
-  ).filter((value) => value <= maxValue)
+  const maxValue = Math.max(
+    5,
+    ...enrollments.map((item) => item.count)
+  )
 
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+
+      {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h2 className="text-lg font-bold text-[#0b1b33]">
-            Learning activity
+            Student enrollments
           </h2>
+
           <p className="mt-1 text-sm text-slate-500">
-            Student engagement across the platform
+            New course enrollments over time
           </p>
         </div>
 
@@ -211,121 +176,64 @@ export default function Chart() {
         </select>
       </div>
 
-      <div className="mt-5 flex flex-wrap gap-5 text-xs font-medium text-slate-500">
-        <span className="flex items-center gap-2">
-          <span className="h-2.5 w-2.5 rounded-full bg-[#fe5933]" />
-          Active students
-        </span>
-        <span className="flex items-center gap-2">
-          <span className="h-2.5 w-2.5 rounded-full bg-[#4776e6]" />
-          Lessons completed
-        </span>
-      </div>
+      {/* Total */}
+      {!loading && !error && (
+        <div className="mt-6">
+          <p className="text-sm text-slate-500">
+            Total enrollments in this period
+          </p>
 
-      {error && (
-        <p className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-          Could not load activity: {error}
-        </p>
+          <p className="mt-1 text-3xl font-bold text-[#0b1b33]">
+            {total.toLocaleString()}
+          </p>
+        </div>
       )}
 
+      {/* Chart */}
       {loading ? (
-        <div className="mt-4 flex h-56 items-center justify-center text-sm text-slate-400">
-          Loading learning activity...
+        <div className="flex h-56 items-center justify-center text-sm text-slate-400">
+          Loading enrollments...
         </div>
-      ) : !error && (
-        <div className="mt-4 w-full overflow-hidden">
-          <svg
-            viewBox={`0 0 ${width} ${height}`}
-            role="img"
-            aria-label={`${period} learning activity chart`}
-            className="h-auto w-full"
-          >
-            {ticks.map((value) => (
-              <g key={value}>
-                <line
-                  x1={left}
-                  x2={width - right}
-                  y1={getY(value)}
-                  y2={getY(value)}
-                  stroke="#e9edf3"
-                  strokeDasharray="4 5"
-                />
-                <text
-                  x={left - 8}
-                  y={getY(value) + 4}
-                  fontSize="10"
-                  fill="#94a3b8"
-                  textAnchor="end"
-                >
-                  {value}
-                </text>
-              </g>
-            ))}
+      ) : error ? (
+        <p className="mt-5 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+          Could not load enrollments: {error}
+        </p>
+      ) : total === 0 ? (
+        <div className="flex h-56 items-center justify-center text-sm text-slate-400">
+          No enrollments recorded during this period.
+        </div>
+      ) : (
+        <div className="mt-8 flex h-56 items-end gap-2 sm:gap-4">
+          {enrollments.map((item) => {
+            const barHeight =
+              (item.count / maxValue) * 100
 
-            {activity.length > 1 && (
-              <>
-                <polygon
-                  points={`${getX(0)},${getY(0)} ${makePoints('students')} ${getX(activity.length - 1)},${getY(0)}`}
-                  fill={COLORS.students}
-                  opacity="0.08"
-                />
+            return (
+              <div
+                key={item.label}
+                className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-2"
+              >
+                <span className="text-xs font-semibold text-slate-600">
+                  {item.count}
+                </span>
 
-                <polyline
-                  points={makePoints('students')}
-                  fill="none"
-                  stroke={COLORS.students}
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
+                <div className="flex h-full w-full items-end justify-center">
+                  <div
+                    className="w-full max-w-12 rounded-t-lg transition-all duration-300"
+                    style={{
+                      height: `${Math.max(barHeight, item.count > 0 ? 3 : 0)}%`,
+                      backgroundColor: BAR_COLOR,
+                    }}
+                    title={`${item.count} enrollments`}
+                  />
+                </div>
 
-                <polyline
-                  points={makePoints('lessons')}
-                  fill="none"
-                  stroke={COLORS.lessons}
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </>
-            )}
-
-            {activity.map((item, index) => (
-              <g key={item.day}>
-                <circle
-                  cx={getX(index)}
-                  cy={getY(item.students)}
-                  r="3.5"
-                  fill={COLORS.students}
-                  stroke="white"
-                  strokeWidth="1.5"
-                />
-                <circle
-                  cx={getX(index)}
-                  cy={getY(item.lessons)}
-                  r="3.5"
-                  fill={COLORS.lessons}
-                  stroke="white"
-                  strokeWidth="1.5"
-                />
-                <text
-                  x={getX(index)}
-                  y={height - 7}
-                  fontSize="11"
-                  fill="#94a3b8"
-                  textAnchor="middle"
-                >
-                  {item.day}
-                </text>
-              </g>
-            ))}
-          </svg>
-
-          {activity.length === 0 && (
-            <p className="text-center text-sm text-slate-400">
-              No learning activity recorded for this period.
-            </p>
-          )}
+                <span className="whitespace-nowrap text-[10px] text-slate-400 sm:text-xs">
+                  {item.label}
+                </span>
+              </div>
+            )
+          })}
         </div>
       )}
     </section>

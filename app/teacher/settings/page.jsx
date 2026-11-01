@@ -538,13 +538,6 @@ export default function TeacherSettingsPage() {
               </section>    
             </form>
           )}
-
-          {/* SECURITY */}
-          {activeTab === "security" && (
-            <>
-                       
-            </>
-          )}
         </div>
       </div>
     </div>

@@ -26,7 +26,6 @@ const navigationGroups = [
     items: [
       { label: "Dashboard", href: "/student/dashboard", icon: LayoutDashboard },
       { label: "My Courses", href: "/student/courses", icon: BookOpen },
-      // { label: "Schedule", href: "/student/schedule", icon: CalendarDays },
       {
         label: "Quizzes & Assignments",
         href: "/student/quizzes",
@@ -40,25 +39,8 @@ const navigationGroups = [
     ],
   },
   {
-    title: "Tools",
-    items: [
-      {
-        label: "AI Learning Assistant",
-        href: "/student/ai-assistant",
-        icon: Bot,
-        accent: true,
-      },
-      {
-        label: "Learning Materials",
-        href: "/student/materials",
-        icon: FolderOpen,
-      },
-    ],
-  },
-  {
     title: "Account",
     items: [
-      { label: "My Profile", href: "/student/profile", icon: UserRound },
       { label: "Settings", href: "/student/settings", icon: Settings },
     ],
   },
