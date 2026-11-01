@@ -44,10 +44,10 @@ export default function Hero() {
             Learn anything from{" "}
             <span className="relative whitespace-nowrap">
               <span aria-hidden className="absolute inset-x-[-4px] bottom-1 top-[55%] -z-0 -skew-x-6 rounded bg-[#fe5933]/30" />
-              <span className="relative">teachers</span>
+              <span className="relative">you teachers</span>
             </span>{" "}
-            who love teaching.
-          </h1>
+            at anytime 
+              </h1>
 
           <p className="mt-6 max-w-xl text-lg leading-8 text-slate-600">
             Sensey connects curious students with passionate teachers. Find a course, enroll in a click, and learn at a pace that fits your life.

@@ -12,7 +12,7 @@ import {
 const features = [
   {
     icon: Sparkles,
-    title: "AI-powered learning",
+    title: "Online learning",
     description:
       "Make learning more interactive with AI-powered educational experiences.",
   },

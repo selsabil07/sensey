@@ -66,8 +66,8 @@ export default function Footer() {
             </Link>
 
             <p className="mt-5 max-w-sm text-sm leading-7 text-slate-400 sm:text-base">
-              A smarter way to teach and learn. Sensey brings students,
-              teachers, and AI-powered educational tools together in one
+              A smarter way to teach and learn. Sensey brings students and
+              teachers together in one
               connected platform.
             </p>
 

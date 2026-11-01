@@ -17,9 +17,9 @@ import Navbar from "@/components/public/Navbar";
 const features = [
   {
     icon: BrainCircuit,
-    title: "AI-powered learning",
+    title: "Online learning",
     description:
-      "Make learning more interactive with intelligent tools designed to support students throughout their learning journey.",
+      "Make learning more interactive, designed to support students throughout their learning journey.",
     color: "bg-blue-500/10 text-blue-400",
   },
   {
