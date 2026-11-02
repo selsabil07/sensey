@@ -51,41 +51,7 @@ export default function Hero() {
 
           <p className="mt-6 max-w-xl text-lg leading-8 text-slate-600">
             Sensey connects curious students with passionate teachers. Find a course, enroll in a click, and learn at a pace that fits your life.
-          </p>
-
-          {/* Search */}
-          
-          {/* <form action="/courses" method="get" role="search" className="mt-9 flex max-w-xl items-center gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl shadow-slate-900/5 focus-within:border-[#fe5933]/60 focus-within:ring-4 focus-within:ring-[#fe5933]/15">
-            <label htmlFor="hero-search" className="sr-only">Search courses</label>
-            <Search size={20} className="ml-3 shrink-0 text-slate-400" />
-            <input
-              id="hero-search"
-              name="q"
-              type="search"
-              placeholder="What do you want to learn?"
-              className="min-w-0 flex-1 bg-transparent py-3 text-base text-slate-800 placeholder:text-slate-400 focus:outline-none"
-            />
-            <button
-              type="submit"
-              className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-[#fe5933] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#e94b28] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#fe5933]"
-            >
-              Search
-            </button>
-          </form>
-
-          <div className="mt-4 flex flex-wrap items-center gap-2 text-sm">
-            <span className="text-slate-500">Popular:</span>
-            {SUBJECTS.map((s) => (
-              <Link
-                key={s}
-                href={`/courses?subject=${encodeURIComponent(s)}`}
-                className="rounded-full border border-slate-200 bg-white/70 px-3 py-1 font-medium text-slate-700 transition hover:border-[#fe5933]/50 hover:text-[#c8401f]"
-              >
-                {s}
-              </Link>
-            ))}
-          </div> */}
-
+          </p>      
           <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4">
             <Link
               href="/courses"

@@ -22,7 +22,6 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -52,11 +51,6 @@ export default function SignupPage() {
 
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
-      return;
-    }
-
-    if (!acceptedTerms) {
-      setError("Please accept the Terms & Conditions.");
       return;
     }
 
@@ -244,27 +238,6 @@ export default function SignupPage() {
                 </button>
               </div>
             </div>
-            </div>
-            
-
-            
-
-            <div className="flex items-start gap-2 pt-0.5">
-              <input
-                id="terms"
-                type="checkbox"
-                checked={acceptedTerms}
-                onChange={(e) => setAcceptedTerms(e.target.checked)}
-                disabled={loading}
-                className="mt-1 h-4 w-4 shrink-0 accent-[#fe5933]"
-              />
-              {/* <label htmlFor="terms" className="text-xs leading-5 text-slate-500">
-                I agree to the{" "}
-                <Link href="/terms" className="font-medium text-[#4776e6] hover:underline">
-                  Terms &amp; Conditions
-                </Link>{" "}
-                and privacy policy.
-              </label> */}
             </div>
 
             {error && (
